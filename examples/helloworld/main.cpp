@@ -1,22 +1,21 @@
 #include <iostream>
 #include <web/web.hpp>
 
-using namespace std;
-using namespace web;
 
-int
-main(int argc, char * argv[])
+int main(int argc, char * argv[])
 {
-	application app(argc, argv);
-	try
-	{
-		app.get("/", [](request & req, response & res) {
+	web::application app(argc, argv);
+	constexpr int port = 3333;
+
+	try {
+		app.get("/", [](web::request & req, web::response & res) {
 			res.stream() << "Hello world!";
 		});
-		app.listen(3333);
-	} catch (exception const & e)
-	{
-		cerr << "Caught exception: " << e.what() << endl;
+
+		std::cout << "web server started on 127.0.0.1:" << port << std::endl;
+		app.listen(port);
+	} catch (std::exception const & e) {
+		std::cerr << "Caught exception: " << e.what() << std::endl;
 		return 1;
 	}
 }
