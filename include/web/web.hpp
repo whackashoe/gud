@@ -7,5 +7,6 @@
 #include <web/response.hpp>
 #include <web/application.hpp>
 #include <web/json.hpp>
+#include <web/log.hpp>
 
 #endif /* WEB_H_INCLUDED_ */

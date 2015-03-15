@@ -27,6 +27,10 @@ struct ApiController
 
 int main(int argc, char * argv[])
 {
+    web::log::debug("welcome to web {}", 10);
+    web::log::set_level(web::log::level::notice);
+    web::log::debug("this wont show up because we set min level");
+
 	web::application app(argc, argv);
 	constexpr int port = 3333;
 
