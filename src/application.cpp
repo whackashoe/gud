@@ -12,8 +12,7 @@ application::application(int argc, char * argv[])
 void application::mount_route(int verb, std::string const & path, view_function_t view)
 {
 	view_map_t::iterator mount = views_.find(path);
-	if (mount == views_.end())
-	{
+	if (mount == views_.end()) {
 		// Found no views for specified path.
 		verb_map_t verbs;
 		verbs.insert(std::make_pair(verb, view));
@@ -22,8 +21,7 @@ void application::mount_route(int verb, std::string const & path, view_function_
 	}
 	// Add new view.
 	std::pair<verb_map_t::iterator, bool> route = mount->second.insert(std::make_pair(verb, view));
-	if (!route.second)
-	{
+	if (!route.second) {
 		throw std::logic_error("View already mounted at specified path (" + path + ").");
 	}
 }
@@ -47,15 +45,19 @@ application::view_function_t application::get_route(int http_verb,
 	std::string const & path)
 {
 	view_map_t::iterator mount = views_.find(path);
-	if (mount == views_.end())
+	if (mount == views_.end()) {
 		return view_function_t(); // Path not found.
-	verb_map_t::iterator route = mount->second.find(http_verb);
-	if (route == mount->second.end())
-	{
-		route = mount->second.find(WILDCARD);
-		if (route == mount->second.end())
-			return view_function_t(); // Method not supported?
 	}
+
+	verb_map_t::iterator route = mount->second.find(http_verb);
+	if (route == mount->second.end()) {
+		route = mount->second.find(WILDCARD);
+
+		if (route == mount->second.end()) {
+			return view_function_t(); // Method not supported?
+		}
+	}
+
 	return route->second;
 }
 
@@ -64,8 +66,8 @@ std::string application::process(request & req, response & res) throw()
 	unsigned int result_code = 200;
 	view_function_t view = get_route(req.verb(), req.path());
 	std::string str; // Site response.
-	try
-	{
+
+	try {
 		// Check if specified view exists.
 		// If not, throw "404" - view does not exists.
 		if (!view)
@@ -74,24 +76,22 @@ std::string application::process(request & req, response & res) throw()
 		view(req, res);
 		// Generated response.
 		str = res.stream().str();
-	} catch (web::http_error const & e)
-	{
+	} catch (web::http_error const & e) {
 		// Change HTTP result.
 		result_code = e.error_code();
 		// Generated response
 		// (before the exception was raised)
 		str = res.stream().str();
-	} catch (std::exception const & e)
-	{
+	} catch (std::exception const & e) {
 		// We know what does this error (could) mean.
 		result_code = 500;
 		// Exception description is our response.
 		str = e.what();
-	} catch (...)
-	{
+	} catch (...) {
 		// We do not have idea what this error means.
 		result_code = 500;
 	}
+
 	// Construct a valid HTTP response.
 	std::stringstream output;
 	output << "HTTP/1.1 " << result_code << " OK\r\n"
@@ -99,6 +99,7 @@ std::string application::process(request & req, response & res) throw()
 		"Content-Length: " << str.length() <<
 		"\r\n\r\n"
 		<< str;
+
 	return output.str();
 }
 
@@ -115,51 +116,57 @@ application::view_map_t const & application::routes() const
 void application::listen(unsigned short port, const char * address)
 {
 	server_socket_ = ::socket(AF_INET, SOCK_STREAM, 0);
-	if (server_socket_ < 0)
-	{
+	if (server_socket_ < 0) {
 		__throw_system_exception();
 	}
+
 	struct sockaddr_in serv_addr = {0};
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(port);
+
 	int value = 1;
-	if (::setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(serv_addr)) < 0)
+
+	if (::setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(serv_addr)) < 0) {
 		__throw_system_exception();
-	if (::bind(server_socket_, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
+	}
+	if (::bind(server_socket_, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		__throw_system_exception();
-	if (::listen(server_socket_, 1) < 0)
+	}
+	if (::listen(server_socket_, 1) < 0) {
 		__throw_system_exception();
+	}
+
 	while (true)
 	{
 		struct sockaddr_in client_addr = {0};
 		socklen_t client_len = sizeof(client_addr);
 		int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
-		if (client_socket < 0)
+
+		if (client_socket < 0) {
 			__throw_system_exception();
+		}
+
 		// New client connected
 		std::vector<char> raw_request(65535); // Need more?
 		unsigned int pos = 0;
-		while (pos < raw_request.size())
-		{
+
+		while (pos < raw_request.size()) {
 			int n = ::read(client_socket, &raw_request[pos], raw_request.size() - pos);
-			if (n < 0)
-			{
+			if (n < 0) {
 				__throw_system_exception();
-			} else if (n == 0)
-			{
+			} else if (n == 0) {
 				// Client disconnected
 				break;
 			}
 			// Find headers
 			pos += n;
-			for (unsigned int i = 3; i < pos; i++)
-			{
+			for (unsigned int i = 3; i < pos; i++) {
 				if ((raw_request[i - 3] == '\r') &&
 					(raw_request[i - 2] == '\n') &&
 					(raw_request[i - 1] == '\r') &&
-					(raw_request[i] == '\n'))
-				{
+					(raw_request[i] == '\n')
+				) {
 					// Found headers.
 					std::string headers(raw_request.begin(), raw_request.end());
 					request req(headers); // can throw
@@ -168,11 +175,11 @@ void application::listen(unsigned short port, const char * address)
 					// Flush raw response (with headers) to client.
 					std::vector<char> buf(data.begin(), data.end());
 					unsigned int pos = 0;
-					while (pos < buf.size())
-					{
+
+					while (pos < buf.size()) {
 						int n = ::send(client_socket, &buf[pos], buf.size() - pos, 0);
-						if (n < 0)
-						{
+
+						if (n < 0) {
 							std::cerr << "Unable to write data to socket: " << strerror(errno) << std::endl;
 							break;
 						}

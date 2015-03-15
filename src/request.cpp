@@ -6,18 +6,15 @@ request::request(std::string const & headers)
 {
 	std::stringstream ss(headers);
 	std::string line;
-	while (std::getline(ss, line))
-	{
-		if ((line.find("GET") == 0) ||
-			(line.find("POST") == 0))
-		{
+
+	while (std::getline(ss, line)) {
+		if (line.find("GET") == 0 || line.find("POST") == 0) {
 			std::stringstream ss(line);
 			ss >> method_ >> path_;
 		}
 	}
 
-	if (method_.empty())
-	{
+	if (method_.empty()) {
 		throw std::runtime_error("Found no HTTP verb in the request!");
 	}
 }
@@ -34,16 +31,11 @@ std::string const & request::path() const
 
 int request::verb() const
 {
-	if (method_ == "GET")
-	{
+	if (method_ == "GET") {
 		return GET;
-	}
-	else if (method_ == "POST")
-	{
+	} else if (method_ == "POST") {
 		return POST;
-	}
-	else
-	{
+	} else {
 		return UNKNOWN;
 	}
 }
