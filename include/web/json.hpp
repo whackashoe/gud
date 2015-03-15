@@ -27,8 +27,9 @@ iterators allow a ReversibleContainer to be iterated over in reverse.
 @see http://en.cppreference.com/w/cpp/concept/ReversibleContainer
 */
 
-#ifndef _NLOHMANN_JSON
-#define _NLOHMANN_JSON
+#if !defined(WEB_JSON_H_INCLUDED_)
+#define WEB_JSON_H_INCLUDED_
+
 
 #include <algorithm>
 #include <cmath>
@@ -50,7 +51,7 @@ iterators allow a ReversibleContainer to be iterated over in reverse.
 @brief namespace for Niels Lohmann
 @see https://github.com/nlohmann
 */
-namespace nlohmann
+namespace web
 {
 
 /*!
@@ -4306,10 +4307,10 @@ namespace std
 @ingroup container
 */
 template <>
-inline void swap(nlohmann::json& j1,
-                 nlohmann::json& j2) noexcept(
-                     is_nothrow_move_constructible<nlohmann::json>::value and
-                     is_nothrow_move_assignable<nlohmann::json>::value
+inline void swap(web::json& j1,
+                 web::json& j2) noexcept(
+                     is_nothrow_move_constructible<web::json>::value and
+                     is_nothrow_move_assignable<web::json>::value
                  )
 {
     j1.swap(j2);
@@ -4317,13 +4318,13 @@ inline void swap(nlohmann::json& j1,
 
 /// hash value for JSON objects
 template <>
-struct hash<nlohmann::json>
+struct hash<web::json>
 {
     /// return a hash value for a JSON object
-    inline size_t operator()(const nlohmann::json& j) const
+    inline size_t operator()(const web::json& j) const
     {
         // a naive hashing via the string representation
-        const auto& h = hash<nlohmann::json::string_t>();
+        const auto& h = hash<web::json::string_t>();
         return h(j.dump());
     }
 };
@@ -4337,10 +4338,10 @@ no parse error occurred.
 @param s  a string representation of a JSON object
 @return a JSON object
 */
-inline nlohmann::json operator "" _json(const char* s, std::size_t)
+inline web::json operator "" _json(const char* s, std::size_t)
 {
-    return nlohmann::json::parse(reinterpret_cast<nlohmann::json::string_t::value_type*>
+    return web::json::parse(reinterpret_cast<web::json::string_t::value_type*>
                                  (const_cast<char*>(s)));
 }
 
-#endif
+#endif /* WEB_JSON_H_INCLUDED_ */
