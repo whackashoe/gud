@@ -138,8 +138,7 @@ void application::listen(unsigned short port, const char * address)
 		__throw_system_exception();
 	}
 
-	while (true)
-	{
+	while (true) {
 		struct sockaddr_in client_addr = {0};
 		socklen_t client_len = sizeof(client_addr);
 		int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
@@ -154,8 +153,10 @@ void application::listen(unsigned short port, const char * address)
 
 		while (pos < raw_request.size()) {
 			int n = ::read(client_socket, &raw_request[pos], raw_request.size() - pos);
+
 			if (n < 0) {
-				__throw_system_exception();
+				// Connection reset
+				break;
 			} else if (n == 0) {
 				// Client disconnected
 				break;
@@ -171,6 +172,7 @@ void application::listen(unsigned short port, const char * address)
 					// Found headers.
 					std::string headers(raw_request.begin(), raw_request.end());
 					request req(headers); // can throw
+
 					response res;
 					std::string const & data = process(req, res);
 
