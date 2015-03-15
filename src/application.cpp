@@ -126,7 +126,7 @@ void application::listen(unsigned short port, const char * address)
 	int value = 1;
 	if (::setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(serv_addr)) < 0)
 		__throw_system_exception();
-	if (::bind(server_socket_, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) 
+	if (::bind(server_socket_, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0)
 		__throw_system_exception();
 	if (::listen(server_socket_, 1) < 0)
 		__throw_system_exception();
@@ -134,7 +134,7 @@ void application::listen(unsigned short port, const char * address)
 	{
 		struct sockaddr_in client_addr = {0};
 		socklen_t client_len = sizeof(client_addr);
-		int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);			
+		int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
 		if (client_socket < 0)
 			__throw_system_exception();
 		// New client connected

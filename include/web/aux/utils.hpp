@@ -3,7 +3,7 @@
 
 /**
  * Throws a runtime error exception with a text representation of the error.
- * 
+ *
  * Remember to include <cerrno>.
  */
 #define __throw_system_exception()                                           \
