@@ -73,19 +73,23 @@ std::string application::process(request & req, response & res) throw()
 		if (!view) {
 			throw http_error(404);
 		}
+
 		// Run view.
 		view(req, res);
+
 		// Generated response.
 		str = res.stream().str();
 	} catch (web::http_error const & e) {
 		// Change HTTP result.
 		result_code = e.error_code();
+
 		// Generated response
 		// (before the exception was raised)
 		str = res.stream().str();
 	} catch (std::exception const & e) {
 		// We know what does this error (could) mean.
 		result_code = 500;
+
 		// Exception description is our response.
 		str = e.what();
 	} catch (...) {
@@ -152,7 +156,7 @@ void application::listen(unsigned short port, const char * address)
 		unsigned int pos = 0;
 
 		while (pos < raw_request.size()) {
-			int n = ::read(client_socket, &raw_request[pos], raw_request.size() - pos);
+			const int n = ::read(client_socket, &raw_request[pos], raw_request.size() - pos);
 
 			if (n < 0) {
 				// Connection reset
