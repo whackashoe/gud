@@ -70,8 +70,9 @@ std::string application::process(request & req, response & res) throw()
 	try {
 		// Check if specified view exists.
 		// If not, throw "404" - view does not exists.
-		if (!view)
+		if (!view) {
 			throw http_error(404);
+		}
 		// Run view.
 		view(req, res);
 		// Generated response.
@@ -165,17 +166,18 @@ void application::listen(unsigned short port, const char * address)
 				if ((raw_request[i - 3] == '\r') &&
 					(raw_request[i - 2] == '\n') &&
 					(raw_request[i - 1] == '\r') &&
-					(raw_request[i] == '\n')
+					(raw_request[i]     == '\n')
 				) {
 					// Found headers.
 					std::string headers(raw_request.begin(), raw_request.end());
 					request req(headers); // can throw
 					response res;
 					std::string const & data = process(req, res);
+
 					// Flush raw response (with headers) to client.
 					std::vector<char> buf(data.begin(), data.end());
-					unsigned int pos = 0;
 
+					unsigned int pos = 0;
 					while (pos < buf.size()) {
 						int n = ::send(client_socket, &buf[pos], buf.size() - pos, 0);
 
@@ -183,6 +185,7 @@ void application::listen(unsigned short port, const char * address)
 							std::cerr << "Unable to write data to socket: " << strerror(errno) << std::endl;
 							break;
 						}
+
 						pos += n;
 					}
 				}
