@@ -17,8 +17,10 @@ void application::mount_route(int verb, std::string const & path, view_function_
 		verb_map_t verbs;
 		verbs.insert(std::make_pair(verb, view));
 		views_.insert(std::make_pair(path, verbs));
+
 		return;
 	}
+
 	// Add new view.
 	std::pair<verb_map_t::iterator, bool> route = mount->second.insert(std::make_pair(verb, view));
 	if (!route.second) {
@@ -40,7 +42,6 @@ void application::head(std::string const & path, view_function_t view)
 {
 	mount_route(HEAD, path, view);
 }
-
 
 void application::put(std::string const & path, view_function_t view)
 {
