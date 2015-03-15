@@ -15,8 +15,13 @@ enum http_verbs
 {
 	UNKNOWN,
 	WILDCARD,
+	OPTIONS,
 	GET,
-	POST
+	HEAD,
+	PUT,
+	POST,
+	PATCH,
+	DELETE
 };
 
 /**

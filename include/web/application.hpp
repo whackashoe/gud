@@ -81,17 +81,47 @@ public:
 	 */
 	void mount_route(int verb, std::string const & path, view_function_t view);
 	/**
+	 * Convenient shortcut for mounting OPTIONS view.
+	 * @param path Path.
+	 * @param view View function.
+	 */
+	void options(std::string const & path, view_function_t view);
+	/**
 	 * Convenient shortcut for mounting GET view.
 	 * @param path Path.
 	 * @param view View function.
 	 */
 	void get(std::string const & path, view_function_t view);
 	/**
+	 * Convenient shortcut for mounting HEAD view.
+	 * @param path Path.
+	 * @param view View function.
+	 */
+	void head(std::string const & path, view_function_t view);
+	/**
+	 * Convenient shortcut for mounting PUT view.
+	 * @param path Path.
+	 * @param view View function.
+	 */
+	void put(std::string const & path, view_function_t view);
+	/**
+	 * Convenient shortcut for mounting PATCH view.
+	 * @param path Path.
+	 * @param view View function.
+	 */
+	void patch(std::string const & path, view_function_t view);
+	/**
 	 * Convenient shortcut for mounting GET view.
 	 * @param path Path.
 	 * @param view View function.
 	 */
 	void post(std::string const & path, view_function_t view);
+	/**
+	 * Convenient shortcut for mounting DELETE view.
+	 * @param path Path.
+	 * @param view View function.
+	 */
+	void delete_(std::string const & path, view_function_t view);
 	/**
 	 * Convenient shortcut for mounting wildcard view.
 	 * @param path Path.

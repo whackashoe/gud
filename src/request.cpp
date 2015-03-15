@@ -33,8 +33,18 @@ int request::verb() const
 {
 	if (method_ == "GET") {
 		return GET;
+	} else if (method_ == "HEAD") {
+		return HEAD;
+	} else if (method_ == "OPTIONS") {
+		return OPTIONS;
+	} else if (method_ == "PUT") {
+		return PUT;
+	} else if (method_ == "PATCH") {
+		return PATCH;
 	} else if (method_ == "POST") {
 		return POST;
+	} else if (method_ == "DELETE") {
+		return DELETE;
 	} else {
 		return UNKNOWN;
 	}

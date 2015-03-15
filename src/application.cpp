@@ -26,14 +26,40 @@ void application::mount_route(int verb, std::string const & path, view_function_
 	}
 }
 
+void application::options(std::string const & path, view_function_t view)
+{
+	mount_route(OPTIONS, path, view);
+}
+
 void application::get(std::string const & path, view_function_t view)
 {
 	mount_route(GET, path, view);
 }
 
+void application::head(std::string const & path, view_function_t view)
+{
+	mount_route(HEAD, path, view);
+}
+
+
+void application::put(std::string const & path, view_function_t view)
+{
+	mount_route(PUT, path, view);
+}
+
+void application::patch(std::string const & path, view_function_t view)
+{
+	mount_route(PATCH, path, view);
+}
+
 void application::post(std::string const & path, view_function_t view)
 {
 	mount_route(POST, path, view);
+}
+
+void application::delete_(std::string const & path, view_function_t view)
+{
+	mount_route(DELETE, path, view);
 }
 
 void application::all(std::string const & path, view_function_t view)
