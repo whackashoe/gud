@@ -38,14 +38,14 @@ private:
 	std::vector<std::string> args_;
 
 	/**
-	 * verb->view map type (a better indexing?)
+	 * method->view map type (a better indexing?)
 	 */
-	typedef std::map<int /* verb */, view_function_t> verb_map_t;
+	typedef std::map<request::http_method, view_function_t> method_map_t;
 
 	/**
-	 * path->mapped verbs type
+	 * path->mapped methods type
 	 */
-	typedef std::map<std::string, verb_map_t> view_map_t;
+	typedef std::map<std::string, method_map_t> view_map_t;
 
 	/**
 	 * Map of views.
@@ -80,11 +80,11 @@ public:
 
 	/**
 	 * Mount a GET view at `path` to `view`.
-	 * @param verb (GET, POST, ...)
+	 * @param method (GET, POST, ...)
 	 * @param path Path.
 	 * @param view View function.
 	 */
-	void mount_route(int verb, std::string const & path, view_function_t view);
+	void mount_route(request::http_method method, std::string const & path, view_function_t view);
 
 	/**
 	 * Convenient shortcut for mounting OPTIONS view.
@@ -99,13 +99,6 @@ public:
 	 * @param view View function.
 	 */
 	void get(std::string const & path, view_function_t view);
-
-	/**
-	 * Convenient shortcut for mounting HEAD view.
-	 * @param path Path.
-	 * @param view View function.
-	 */
-	void head(std::string const & path, view_function_t view);
 
 	/**
 	 * Convenient shortcut for mounting PUT view.
@@ -144,12 +137,12 @@ public:
 
 	/**
 	 * Get view function for a route.
-	 * Match http_verb and path to a view, then return it.
+	 * Match method and path to a view, then return it.
 	 *
-	 * @param http_verb HTTP verb (GET, POST, etc.)
+	 * @param method HTTP method (GET, POST, etc.)
 	 * @param path View path.
 	 */
-	view_function_t get_route(int http_verb, std::string const & path);
+	view_function_t get_route(request::http_method method, std::string const & path);
 
 	/**
 	 * Process a request and return response. Does not throw.
@@ -166,7 +159,7 @@ public:
 	 * @param port Port number (0-65535)
 	 * @param address Address (default is 127.0.0.1)
 	 */
-	void listen(unsigned short port, const char * address = "127.0.0.1");
+	void listen(unsigned short const port, const char * address = "127.0.0.1");
 };
 
 } /* /namespace web */

@@ -9,20 +9,20 @@ application::application(int argc, char * argv[])
 	//
 }
 
-void application::mount_route(int verb, std::string const & path, view_function_t view)
+void application::mount_route(request::http_method method, std::string const & path, view_function_t view)
 {
 	view_map_t::iterator mount = views_.find(path);
 	if (mount == views_.end()) {
 		// Found no views for specified path.
-		verb_map_t verbs;
-		verbs.insert(std::make_pair(verb, view));
-		views_.insert(std::make_pair(path, verbs));
+		method_map_t methods;
+		methods.insert(std::make_pair(method, view));
+		views_.insert(std::make_pair(path, methods));
 
 		return;
 	}
 
 	// Add new view.
-	std::pair<verb_map_t::iterator, bool> route = mount->second.insert(std::make_pair(verb, view));
+	std::pair<method_map_t::iterator, bool> route = mount->second.insert(std::make_pair(method, view));
 	if (!route.second) {
 		throw std::logic_error("View already mounted at specified path (" + path + ").");
 	}
@@ -30,55 +30,50 @@ void application::mount_route(int verb, std::string const & path, view_function_
 
 void application::options(std::string const & path, view_function_t view)
 {
-	mount_route(OPTIONS, path, view);
+	mount_route(request::http_method::OPTIONS, path, view);
 }
 
 void application::get(std::string const & path, view_function_t view)
 {
-	mount_route(GET, path, view);
-}
-
-void application::head(std::string const & path, view_function_t view)
-{
-	mount_route(HEAD, path, view);
+	mount_route(request::http_method::HEAD, path, view);
+	mount_route(request::http_method::GET, path, view);
 }
 
 void application::put(std::string const & path, view_function_t view)
 {
-	mount_route(PUT, path, view);
+	mount_route(request::http_method::PUT, path, view);
 }
 
 void application::patch(std::string const & path, view_function_t view)
 {
-	mount_route(PATCH, path, view);
+	mount_route(request::http_method::PATCH, path, view);
 }
 
 void application::post(std::string const & path, view_function_t view)
 {
-	mount_route(POST, path, view);
+	mount_route(request::http_method::POST, path, view);
 }
 
 void application::delete_(std::string const & path, view_function_t view)
 {
-	mount_route(DELETE, path, view);
+	mount_route(request::http_method::DELETE, path, view);
 }
 
 void application::all(std::string const & path, view_function_t view)
 {
-	mount_route(WILDCARD, path, view);
+	mount_route(request::http_method::WILDCARD, path, view);
 }
 
-application::view_function_t application::get_route(int http_verb,
-	std::string const & path)
+application::view_function_t application::get_route(request::http_method method, std::string const & path)
 {
 	view_map_t::iterator mount = views_.find(path);
 	if (mount == views_.end()) {
 		return view_function_t(); // Path not found.
 	}
 
-	verb_map_t::iterator route = mount->second.find(http_verb);
+	method_map_t::iterator route = mount->second.find(method);
 	if (route == mount->second.end()) {
-		route = mount->second.find(WILDCARD);
+		route = mount->second.find(request::http_method::WILDCARD);
 
 		if (route == mount->second.end()) {
 			return view_function_t(); // Method not supported?
@@ -91,7 +86,7 @@ application::view_function_t application::get_route(int http_verb,
 std::string application::process(request & req, response & res) throw()
 {
 	unsigned int result_code = 200;
-	view_function_t view = get_route(req.verb(), req.path());
+	view_function_t view = get_route(req.method(), req.path());
 	std::string str; // Site response.
 
 	try {
@@ -126,11 +121,17 @@ std::string application::process(request & req, response & res) throw()
 
 	// Construct a valid HTTP response.
 	std::stringstream output;
-	output << "HTTP/1.1 " << result_code << " OK\r\n"
-		"Content-Type:text/html\r\n"
-		"Content-Length: " << str.length() <<
-		"\r\n\r\n"
-		<< str;
+	output << "HTTP/1.1 " << result_code << " OK\r\n";
+
+	for(auto & i : res.headers()) {
+		output << i.first << ": " << i.second << "\r\n";
+	}
+
+	output << "Content-Length: " << str.length() << "\r\n";
+
+	if(req.method() != request::http_method::HEAD) {
+		output << "\r\n" << str;
+	}
 
 	return output.str();
 }
@@ -145,7 +146,7 @@ application::view_map_t const & application::routes() const
 	return views_;
 }
 
-void application::listen(unsigned short port, const char * address)
+void application::listen(unsigned short const port, const char * address)
 {
 	server_socket_ = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (server_socket_ < 0) {

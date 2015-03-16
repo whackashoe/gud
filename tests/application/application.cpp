@@ -34,12 +34,12 @@ BOOST_AUTO_TEST_CASE (test_application_router)
 	BOOST_REQUIRE_EQUAL(app.routes().size(), 1);
 	BOOST_REQUIRE_EQUAL(app.routes().find("/")->second.size(), 1);
 	// Process route / with GET verb.
-	web::application::view_function_t view = app.get_route(web::GET, "/");
+	web::application::view_function_t view = app.get_route(web::request::http_method::GET, "/");
 	BOOST_REQUIRE(view);
 	// Same path, different verb.
-	BOOST_CHECK(!app.get_route(web::POST, "/"));
+	BOOST_CHECK(!app.get_route(web::request::http_method::POST, "/"));
 	// Path not found.
-	BOOST_CHECK(!app.get_route(web::GET, "/path2"));
+	BOOST_CHECK(!app.get_route(web::request::http_method::GET, "/path2"));
 	
 	// Run the view with fake req/res pair.
 	web::request req("GET / HTTP/1.1\r\n\r\n");
@@ -60,12 +60,12 @@ BOOST_AUTO_TEST_CASE (test_application_router_wildcard)
 	BOOST_REQUIRE_EQUAL(app.routes().size(), 0);
 	// Set wildcard view.
 	app.all("/", [](web::request& req, web::response& res) {
-		res.stream() << "Method is... " << req.method();
+		res.stream() << "Method is... " << req.method_s();
 	});
 	
 	// Check if get_route returns valid functor.
-	web::application::view_function_t wildcard1 = app.get_route(web::GET, "/");
-	web::application::view_function_t wildcard2 = app.get_route(web::POST, "/");
+	web::application::view_function_t wildcard1 = app.get_route(web::request::http_method::GET, "/");
+	web::application::view_function_t wildcard2 = app.get_route(web::request::http_method::POST, "/");
 	BOOST_REQUIRE(wildcard1);
 	BOOST_REQUIRE(wildcard2);
 	//
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE (test_application_router_return_http_error)
 	web::application app(1, const_cast<char**>(args));
 	BOOST_REQUIRE_EQUAL(app.routes().size(), 0);
 	app.all("/wildcard/", [](web::request& req, web::response& res) {
-		if (req.method() == "GET")
+		if (req.method_s() == "GET")
 		{
 			res.stream() << "You're welcome!";
 			return;
@@ -112,8 +112,8 @@ BOOST_AUTO_TEST_CASE (test_application_router_return_http_error)
 
 		throw std::runtime_error("wat");
 	});
-	BOOST_REQUIRE(app.get_route(web::GET, "/wildcard/"));
-	BOOST_REQUIRE(app.get_route(web::POST, "/wildcard/"));
+	BOOST_REQUIRE(app.get_route(web::request::http_method::GET, "/wildcard/"));
+	BOOST_REQUIRE(app.get_route(web::request::http_method::POST, "/wildcard/"));
 	// Prepare request
 	web::request req_get("GET /wildcard/ HTTP/1.1\r\n\r\n");
 	web::response res_get;
