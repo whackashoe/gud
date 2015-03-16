@@ -8,5 +8,6 @@
 #include <web/application.hpp>
 #include <web/json.hpp>
 #include <web/log.hpp>
+#include <web/view.hpp>
 
 #endif /* WEB_H_INCLUDED_ */
