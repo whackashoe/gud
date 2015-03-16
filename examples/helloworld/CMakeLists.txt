@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
 PROJECT (helloworld)
+FIND_PACKAGE (Boost REQUIRED)
 
 SET (SOURCES
 	main.cpp)
@@ -7,3 +8,4 @@ ADD_EXECUTABLE (helloworld
 	${SOURCES})
 TARGET_LINK_LIBRARIES (helloworld
 	web)
+TARGET_LINK_LIBRARIES( helloworld boost_regex )

@@ -1,9 +1,9 @@
 #include <iostream>
 #include <web/web.hpp>
 
-struct ApiController
+struct ExampleController
 {
-	static void miscdata(web::request & req, web::response & res)
+	static void grab_data(web::request & req, web::response & res)
 	{
 		web::json json = {
 			{ "pi", 3.141 },
@@ -24,13 +24,8 @@ struct ApiController
 	}
 };
 
-
 int main(int argc, char * argv[])
 {
-    web::log::debug("welcome to web {}", 10);
-    web::log::set_level(web::log::level::notice);
-    web::log::debug("this wont show up because we set min level");
-
 	web::application app(argc, argv);
 	constexpr int port = 3333;
 
@@ -40,10 +35,24 @@ int main(int argc, char * argv[])
 			res.stream() << "Hello world!";
 		});
 
-		// Or simply reference a publicstatic method in a controller
-		app.get("/json", ApiController::miscdata);
+		// Or simply reference a public static method in a controller
+		app.get("/json", ExampleController::grab_data);
 
-		std::cout << "web server started on 127.0.0.1:" << port << std::endl;
+		// Render a view easily
+		app.get("/view", [](web::request & req, web::response & res) {
+			res.stream() << web::view::make("lol", {
+				{ "name", "Gloop" },
+				{ "age",  4 }
+			});
+		});
+
+		// Straightforward logging
+		app.get("/log", [](web::request & req, web::response & res) {
+		    web::log::info("welcome to web");
+    		res.stream() << "logged";
+		});
+
+		web::log::info("web server started on 127.0.0.1:{}", port);
 		app.listen(port);
 	} catch (std::exception const & e) {
 		std::cerr << "Caught exception: " << e.what() << std::endl;
