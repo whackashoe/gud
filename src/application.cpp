@@ -117,7 +117,7 @@ std::string application::process(request & req, response & res) throw()
 {
 	unsigned int result_code = 200;
 	view_function_t view = get_route(req.method(), req.path());
-	std::string str; // Site response.
+	std::string response; // Site response.
 
 	try {
 		// Check if specified view exists.
@@ -130,37 +130,45 @@ std::string application::process(request & req, response & res) throw()
 		view(req, res);
 
 		// Generated response.
-		str = res.stream().str();
+		response = res.stream().str();
 	} catch (web::http_error const & e) {
 		// Change HTTP result.
 		result_code = e.error_code();
 
 		// Generated response
 		// (before the exception was raised)
-		str = res.stream().str();
+		response = res.stream().str();
 	} catch (std::exception const & e) {
 		// We know what does this error (could) mean.
 		result_code = 500;
 
 		// Exception description is our response.
-		str = e.what();
+		response = e.what();
 	} catch (...) {
 		// We do not have idea what this error means.
 		result_code = 500;
 	}
 
+	response += "\r\n";
+
 	// Construct a valid HTTP response.
 	std::stringstream output;
 	output << "HTTP/1.1 " << result_code << " OK\r\n";
 
+	// Add all stored headers
 	for(auto & i : res.headers()) {
 		output << i.first << ": " << i.second << "\r\n";
 	}
 
-	output << "Content-Length: " << str.length() << "\r\n";
+	// And custom "always" headers
+	output << "Content-Length: " << response.length() << "\r\n";
 
+	// Split to separate from body
+	output << "\r\n";
+
+	// Head requires no body
 	if(req.method() != request::http_method::HEAD) {
-		output << "\r\n" << str;
+		output << response;
 	}
 
 	return output.str();
