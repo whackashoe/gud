@@ -56,7 +56,7 @@ int main(int argc, char * argv[])
 		web::log::info("web server started on 127.0.0.1:{}", web::config::get("server.port"));
 		app.listen(web::config::get("server.port"));
 	} catch (std::exception const & e) {
-		std::cerr << "Caught exception: " << e.what() << std::endl;
+		web::log::error("Caught exception: {}", e.what());
 		return 1;
 	}
 }
