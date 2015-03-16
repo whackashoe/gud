@@ -63,6 +63,9 @@ public:
 	 */
 	request(std::string const & headers);
 
+	/**
+	 * Get a map of all request headers
+	 */
 	std::map<std::string, std::string> const & headers() const;
 };
 

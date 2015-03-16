@@ -19,6 +19,9 @@ private:
 	 */
 	std::stringstream stream_;
 
+	/**
+	 * All stored headers
+	 */
 	std::map<std::string, std::string> headers_;
 public:
 	/**
@@ -37,8 +40,14 @@ public:
 	std::stringstream & stream();
 
 
+	/**
+	 * Append a header to the response
+	 */
 	void add_header(std::string const & field, std::string const & value);
 
+	/**
+	 * Get a map of all request headers
+	 */
 	std::map<std::string, std::string> const & headers() const;
 };
 
