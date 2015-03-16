@@ -5,7 +5,20 @@ using namespace web;
 web::json config::settings_ = {
     { "server", {
         { "port", 3333 },
-        { "name", "web" }
+        { "name", "web" },
+        { "host", "127.0.0.1" }
+    }},
+    { "app", {
+        { "debug", true },
+        { "timezone", "UTC" },
+        { "paths", {
+            { "root", "/var/www" },
+            { "views", "/resources/views/" }
+        }},
+        { "log", {
+            { "format", "%+" },
+            { "level", "debug" }
+        }}
     }}
 };
 

@@ -17,10 +17,8 @@ private:
 public:
     using level = spdlog::level::level_enum;
 
-    static void set_level(spdlog::level::level_enum l)
-    {
-        web::log::logger->set_level(l);
-    }
+    static void set_level(spdlog::level::level_enum l);
+    static void set_pattern(std::string const & pattern);
 
     template <typename T> static void trace(const T& v)
     {

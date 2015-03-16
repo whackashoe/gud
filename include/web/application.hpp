@@ -56,6 +56,11 @@ private:
 	 * Server socket file descriptor.
 	 */
 	int server_socket_;
+
+	/**
+	 * Initialize all systems with config
+	 */
+	void bootup();
 public:
 	application(application const &) = delete;
 	application & operator=(application const &) = delete;

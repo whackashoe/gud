@@ -6,7 +6,37 @@ application::application(int argc, char * argv[])
 	: args_(argv, argv + argc)
 	, server_socket_(-1)
 {
-	//
+	bootup();
+}
+
+void application::bootup()
+{
+	web::log::set_pattern(web::config::get("app.log.format"));
+	{
+		std::string log_level = web::config::get("app.log.level");
+
+		if(log_level == "trace") {
+			web::log::set_level(spdlog::level::level_enum::trace);
+		} else if(log_level == "debug") {
+	    	web::log::set_level(spdlog::level::level_enum::debug);
+	    } else if(log_level == "info") {
+	    	web::log::set_level(spdlog::level::level_enum::info);
+	    } else if(log_level == "notice") {
+	    	web::log::set_level(spdlog::level::level_enum::notice);
+	    } else if(log_level == "warn") {
+	    	web::log::set_level(spdlog::level::level_enum::warn);
+	    } else if(log_level == "err") {
+	    	web::log::set_level(spdlog::level::level_enum::err);
+	    } else if(log_level == "critical") {
+	    	web::log::set_level(spdlog::level::level_enum::critical);
+	    } else if(log_level == "alert") {
+	    	web::log::set_level(spdlog::level::level_enum::alert);
+	    } else if(log_level == "emerg") {
+	    	web::log::set_level(spdlog::level::level_enum::emerg);
+	    } else if(log_level == "off") {
+	    	web::log::set_level(spdlog::level::level_enum::off);
+	    }
+	}
 }
 
 void application::mount_route(request::http_method method, std::string const & path, view_function_t view)
