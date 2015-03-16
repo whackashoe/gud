@@ -9,5 +9,6 @@
 #include <web/json.hpp>
 #include <web/log.hpp>
 #include <web/view.hpp>
+#include <web/config.hpp>
 
 #endif /* WEB_H_INCLUDED_ */

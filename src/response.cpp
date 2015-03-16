@@ -5,6 +5,7 @@ using namespace web;
 response::response()
 {
 	add_header("Content-Type", "text/html");
+    add_header("Server", web::config::get("server.name"));
 }
 
 response::~response()

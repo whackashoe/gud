@@ -26,8 +26,9 @@ struct ExampleController
 
 int main(int argc, char * argv[])
 {
+	web::config::publish("server.port", 4444);
+
 	web::application app(argc, argv);
-	constexpr int port = 3333;
 
 	try {
 		// You can use lambda expressions
@@ -52,8 +53,8 @@ int main(int argc, char * argv[])
     		res.stream() << "logged";
 		});
 
-		web::log::info("web server started on 127.0.0.1:{}", port);
-		app.listen(port);
+		web::log::info("web server started on 127.0.0.1:{}", web::config::get("server.port"));
+		app.listen(web::config::get("server.port"));
 	} catch (std::exception const & e) {
 		std::cerr << "Caught exception: " << e.what() << std::endl;
 		return 1;

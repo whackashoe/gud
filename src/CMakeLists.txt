@@ -12,6 +12,7 @@ SET (SOURCES
     view.cpp
     plustache/context.cpp
     plustache/template.cpp
+    config.cpp
 )
 
 ADD_LIBRARY (web

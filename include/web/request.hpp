@@ -35,25 +35,20 @@ public:
 	static std::map<std::string, request::http_method> methods;
 
 private:
-	/**
-	 * Line separated raw header.
-	 */
-	std::vector<std::string> request_lines_;
-
 	std::string method_;
 	std::string path_;
 	std::map<std::string, std::string> headers_;
 
 public:
 	/**
-	 * HTTP verb (GET, POST, PATCH, PUT, etc.)
-	 */
-	std::string const & method_s() const;
-
-	/**
 	 * Get method
 	 */
 	request::http_method method() const;
+
+	/**
+	 * Get method string representation
+	 */
+	std::string const & method_s() const;
 
 	/**
 	 * Path for this HTTP request. Like:

@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include <web/config.hpp>
 
 namespace web {
 

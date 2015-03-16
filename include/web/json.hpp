@@ -2503,7 +2503,7 @@ class basic_json
             }
         }
 
-      private:
+      public:
         /// associated JSON instance
         pointer m_object = nullptr;
         /// the actual iterator of the associated instance
