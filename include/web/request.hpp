@@ -1,4 +1,4 @@
-#if !defined(WEB_REQUEST_H_INCLUDED_)
+ #if !defined(WEB_REQUEST_H_INCLUDED_)
 #define WEB_REQUEST_H_INCLUDED_
 
 #include <string>
@@ -31,6 +31,7 @@ public:
 		PATCH,
 		DELETE
 	};
+
 	static std::map<std::string, request::http_method> methods;
 
 private:
