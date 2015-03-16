@@ -13,6 +13,8 @@ namespace web {
  */
 class response
 {
+public:
+	static std::map<unsigned int, std::string> status_codes;
 private:
 	/**
 	 * Buffered data written from view.
@@ -23,6 +25,11 @@ private:
 	 * All stored headers
 	 */
 	std::map<std::string, std::string> headers_;
+
+	/**
+	 * HTTP Status Code
+	 */
+	unsigned int status_code_;
 public:
 	/**
 	 * Constructor of HTTP response.
@@ -49,6 +56,16 @@ public:
 	 * Get a map of all request headers
 	 */
 	std::map<std::string, std::string> const & headers() const;
+
+	/**
+	 * Set the status code for response
+	 */
+	void set_status_code(const unsigned int);
+
+	/**
+	 * Get the status code
+	 */
+	unsigned int status_code();
 };
 
 } /* /namespace web */

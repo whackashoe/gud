@@ -126,7 +126,7 @@ application::view_function_t application::get_route(request::http_method method,
 
 std::string application::process(request & req, response & res) throw()
 {
-	unsigned int result_code = 200;
+	unsigned int result_code = res.status_code();
 	view_function_t view = get_route(req.method(), req.path());
 	std::string response; // Site response.
 
@@ -164,7 +164,7 @@ std::string application::process(request & req, response & res) throw()
 
 	// Construct a valid HTTP response.
 	std::stringstream output;
-	output << "HTTP/1.1 " << result_code << " OK\r\n";
+	output << "HTTP/1.1 " << result_code << " " << response::status_codes[result_code] << "\r\n";
 
 	// Add all stored headers
 	for(auto & i : res.headers()) {
