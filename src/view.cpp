@@ -2,9 +2,18 @@
 
 using namespace web;
 
+std::string view::get_view_dir()
+{
+    std::string root = config::get("app.paths.root");
+    std::string vsrc = config::get("app.paths.views");
+
+    return root + vsrc;
+}
+
 std::string view::make(const std::string & path)
 {
-    std::ifstream t(path);
+    std::ifstream t(view::get_view_dir() + path);
+
     std::string str((std::istreambuf_iterator<char>(t)),
                      std::istreambuf_iterator<char>());
     return str;
@@ -12,7 +21,7 @@ std::string view::make(const std::string & path)
 
 std::string view::make(const std::string & path, web::json input)
 {
-    std::ifstream t(path);
+    std::ifstream t(view::get_view_dir() + path);
     std::string content((std::istreambuf_iterator<char>(t)),
                          std::istreambuf_iterator<char>());
 
