@@ -31,6 +31,8 @@ public:
 		PATCH,
 		DELETE
 	};
+	static std::map<std::string, request::http_method> methods;
+
 private:
 	/**
 	 * Line separated raw header.
@@ -41,7 +43,6 @@ private:
 	std::string path_;
 	std::map<std::string, std::string> headers_;
 
-	static std::map<std::string, request::http_method> methods;
 public:
 	/**
 	 * HTTP verb (GET, POST, PATCH, PUT, etc.)
@@ -66,7 +67,7 @@ public:
 	 */
 	request(std::string const & headers);
 
-	//std::map<std::string, std::string> const & headers() const;
+	std::map<std::string, std::string> const & headers() const;
 };
 
 } /* /namespace web */

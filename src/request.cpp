@@ -52,9 +52,7 @@ request::http_method request::method() const
 	return method_it->second;
 }
 
-/*
 std::map<std::string, std::string> const & request::headers() const
 {
-	return headers;
+	return headers_;
 }
-*/
