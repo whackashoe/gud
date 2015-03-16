@@ -8,6 +8,7 @@
 #include <functional>
 #include <cerrno>
 #include <cstring>
+#include <ctime>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -61,6 +62,12 @@ private:
 	 * Initialize all systems with config
 	 */
 	void bootup();
+
+	/**
+	 * Generate formatted string compliant with rfc1123
+	 * For Date header
+	 */
+	std::string rfc1123_datetime(time_t time);
 public:
 	application(application const &) = delete;
 	application & operator=(application const &) = delete;

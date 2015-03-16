@@ -9,6 +9,17 @@ application::application(int argc, char * argv[])
 	bootup();
 }
 
+std::string application::rfc1123_datetime(time_t time)
+{
+	struct tm * timeinfo;
+    char buffer [80];
+
+    timeinfo = gmtime ( &time );
+    strftime (buffer,80,"%a, %d %b %Y %H:%M:%S GMT",timeinfo);
+
+    return buffer;
+}
+
 void application::bootup()
 {
 	web::log::set_pattern(web::config::get("app.log.format"));
@@ -161,6 +172,7 @@ std::string application::process(request & req, response & res) throw()
 	}
 
 	// And custom "always" headers
+	output << "Date: " << rfc1123_datetime(std::time(NULL)) << "\r\n";
 	output << "Content-Length: " << response.length() << "\r\n";
 
 	// Split to separate from body
