@@ -6,6 +6,8 @@ Standard web framework for C++11.
 
 Let's write sexy web apps in pure C++!
 
+This is a continuance and going in a different direction from the good work of [Michał Papierski](https://github.com/mpapierski/web).
+
 ## Features
 
 * Kickass router
@@ -14,6 +16,7 @@ Let's write sexy web apps in pure C++!
 * Json reading and writing utility
 * Logging ability
 * Templating provided via mustache
+* Easy to use config system
 
 ## Requirements
 
@@ -27,7 +30,6 @@ Let's write sexy web apps in pure C++!
 int main(int argc, char * argv[])
 {
 	web::application app(argc, argv);
-	constexpr int port = 3333;
 
 	try {
 		// You can use lambda expressions
@@ -52,8 +54,8 @@ int main(int argc, char * argv[])
     		res.stream() << "logged";
 		});
 
-		web::log::info("web server started on 127.0.0.1:{}", port);
-		app.listen(port);
+		web::log::info("web server started on 127.0.0.1:{}", web::config::get("server.port"));
+		app.listen(web::config::get("server.port"));
 	} catch (std::exception const & e) {
 		std::cerr << "Caught exception: " << e.what() << std::endl;
 		return 1;
