@@ -211,7 +211,7 @@ void application::listen(unsigned short const port, const char * address)
 	while (true) {
 		struct sockaddr_in client_addr = {0};
 		socklen_t client_len = sizeof(client_addr);
-		int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
+		const int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
 
 		if (client_socket < 0) {
 			__throw_system_exception();
