@@ -15,7 +15,7 @@ request::request(std::string const & headers)
 	}
 
 	if (method_.empty()) {
-		throw std::runtime_error("Found no HTTP verb in the request!");
+		web::log::trace("Found no HTTP verb in the request!");
 	}
 }
 

@@ -215,7 +215,7 @@ void application::listen(unsigned short port, const char * address)
 						int n = ::send(client_socket, &buf[pos], buf.size() - pos, 0);
 
 						if (n < 0) {
-							std::cerr << "Unable to write data to socket: " << strerror(errno) << std::endl;
+							web::log::info("Unable to write data to socket: {}", strerror(errno));
 							break;
 						}
 

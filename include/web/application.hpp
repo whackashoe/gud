@@ -17,6 +17,7 @@
 #include <web/request.hpp>
 #include <web/response.hpp>
 #include <web/exceptions.hpp>
+#include <web/log.hpp>
 
 namespace web {
 
