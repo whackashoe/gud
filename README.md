@@ -1,4 +1,4 @@
-# gud [![Build Status](https://secure.travis-ci.org/whackashoe/gud.png)](http://travis-ci.org/whackashoe/gud)
+# gud
 
 Standard web framework for C++11.
 
