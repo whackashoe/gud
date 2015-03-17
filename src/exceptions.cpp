@@ -1,6 +1,6 @@
-#include <web/exceptions.hpp>
+#include <gud/exceptions.hpp>
 
-using namespace web;
+using namespace gud;
 
 http_error::http_error(unsigned int error_code) throw()
 	: error_code_(error_code)

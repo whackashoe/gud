@@ -4,6 +4,6 @@ PROJECT (application)
 ADD_EXECUTABLE (application
 	application.cpp)
 TARGET_LINK_LIBRARIES (application
-	web)
+	gud)
 ADD_TEST (application
 	application)

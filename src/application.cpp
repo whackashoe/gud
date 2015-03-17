@@ -1,6 +1,6 @@
-#include <web/application.hpp>
+#include <gud/application.hpp>
 
-using namespace web;
+using namespace gud;
 
 application::application(int argc, char * argv[])
 	: args_(argv, argv + argc)
@@ -22,30 +22,30 @@ std::string application::rfc1123_datetime(time_t time)
 
 void application::bootup()
 {
-	web::log::set_pattern(web::config::get("app.log.format"));
+	gud::log::set_pattern(gud::config::get("app.log.format"));
 	{
-		std::string log_level = web::config::get("app.log.level");
+		std::string log_level = gud::config::get("app.log.level");
 
 		if(log_level == "trace") {
-			web::log::set_level(spdlog::level::level_enum::trace);
+			gud::log::set_level(spdlog::level::level_enum::trace);
 		} else if(log_level == "debug") {
-	    	web::log::set_level(spdlog::level::level_enum::debug);
+	    	gud::log::set_level(spdlog::level::level_enum::debug);
 	    } else if(log_level == "info") {
-	    	web::log::set_level(spdlog::level::level_enum::info);
+	    	gud::log::set_level(spdlog::level::level_enum::info);
 	    } else if(log_level == "notice") {
-	    	web::log::set_level(spdlog::level::level_enum::notice);
+	    	gud::log::set_level(spdlog::level::level_enum::notice);
 	    } else if(log_level == "warn") {
-	    	web::log::set_level(spdlog::level::level_enum::warn);
+	    	gud::log::set_level(spdlog::level::level_enum::warn);
 	    } else if(log_level == "err") {
-	    	web::log::set_level(spdlog::level::level_enum::err);
+	    	gud::log::set_level(spdlog::level::level_enum::err);
 	    } else if(log_level == "critical") {
-	    	web::log::set_level(spdlog::level::level_enum::critical);
+	    	gud::log::set_level(spdlog::level::level_enum::critical);
 	    } else if(log_level == "alert") {
-	    	web::log::set_level(spdlog::level::level_enum::alert);
+	    	gud::log::set_level(spdlog::level::level_enum::alert);
 	    } else if(log_level == "emerg") {
-	    	web::log::set_level(spdlog::level::level_enum::emerg);
+	    	gud::log::set_level(spdlog::level::level_enum::emerg);
 	    } else if(log_level == "off") {
-	    	web::log::set_level(spdlog::level::level_enum::off);
+	    	gud::log::set_level(spdlog::level::level_enum::off);
 	    }
 	}
 }
@@ -142,7 +142,7 @@ std::string application::process(request & req, response & res) throw()
 
 		// Generated response.
 		response = res.stream().str();
-	} catch (web::http_error const & e) {
+	} catch (gud::http_error const & e) {
 		// Change HTTP result.
 		result_code = e.error_code();
 
@@ -266,7 +266,7 @@ void application::listen(unsigned short const port, const char * address)
 						int n = ::send(client_socket, &buf[pos], buf.size() - pos, 0);
 
 						if (n < 0) {
-							web::log::info("Unable to write data to socket: {}", strerror(errno));
+							gud::log::info("Unable to write data to socket: {}", strerror(errno));
 							break;
 						}
 

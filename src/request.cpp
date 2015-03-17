@@ -1,6 +1,6 @@
-#include <web/request.hpp>
+#include <gud/request.hpp>
 
-using namespace web;
+using namespace gud;
 
 request::request(std::string const & headers)
 {
@@ -30,13 +30,13 @@ request::request(std::string const & headers)
 
 				headers_[field] = value;
 			} else {
-				web::log::trace("Request header missing delimiter");
+				gud::log::trace("Request header missing delimiter");
 			}
 		}
 	}
 
 	if (method_.empty()) {
-		web::log::trace("Found no HTTP method in the request!");
+		gud::log::trace("Found no HTTP method in the request!");
 	}
 }
 

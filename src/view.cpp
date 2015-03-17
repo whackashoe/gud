@@ -1,6 +1,6 @@
-#include <web/view.hpp>
+#include <gud/view.hpp>
 
-using namespace web;
+using namespace gud;
 
 std::string view::get_view_dir()
 {
@@ -19,7 +19,7 @@ std::string view::make(const std::string & path)
     return str;
 }
 
-std::string view::make(const std::string & path, web::json input)
+std::string view::make(const std::string & path, gud::json input)
 {
     std::ifstream t(view::get_view_dir() + path);
     std::string content((std::istreambuf_iterator<char>(t)),

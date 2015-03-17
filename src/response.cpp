@@ -1,11 +1,11 @@
-#include <web/response.hpp>
+#include <gud/response.hpp>
 
-using namespace web;
+using namespace gud;
 
 response::response()
 {
 	add_header("Content-Type", "text/html; charset=UTF-8");
-    add_header("Server", web::config::get("server.name"));
+    add_header("Server", gud::config::get("server.name"));
     status_code_ = 200;
 }
 

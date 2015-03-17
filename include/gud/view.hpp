@@ -1,16 +1,16 @@
-#if !defined(WEB_VIEW_H_INCLUDED_)
-#define WEB_VIEW_H_INCLUDED_
+#if !defined(GUD_VIEW_H_INCLUDED_)
+#define GUD_VIEW_H_INCLUDED_
 
 #include <string>
 #include <sstream>
 #include <fstream>
 #include <streambuf>
-#include <web/json.hpp>
-#include <web/config.hpp>
-#include <web/plustache/plustache_types.hpp>
-#include <web/plustache/template.hpp>
+#include <gud/json.hpp>
+#include <gud/config.hpp>
+#include <gud/plustache/plustache_types.hpp>
+#include <gud/plustache/template.hpp>
 
-namespace web {
+namespace gud {
 
 /**
  * Render templates
@@ -31,9 +31,9 @@ public:
     /**
      * Render a view that contains input data
      */
-    static std::string make(const std::string & path, web::json data);
+    static std::string make(const std::string & path, gud::json data);
 };
 
-} /* /namespace web */
+} /* /namespace gud */
 
-#endif /* WEB_VIEW_H_INCLUDED_ */
+#endif /* GUD_VIEW_H_INCLUDED_ */

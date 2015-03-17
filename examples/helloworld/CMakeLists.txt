@@ -7,5 +7,5 @@ SET (SOURCES
 ADD_EXECUTABLE (helloworld
 	${SOURCES})
 TARGET_LINK_LIBRARIES (helloworld
-	web)
+	gud)
 TARGET_LINK_LIBRARIES( helloworld boost_regex )

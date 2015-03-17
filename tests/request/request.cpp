@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include <web/web.hpp>
+#include <gud/gud.hpp>
 
 using namespace boost;
 
@@ -12,7 +12,7 @@ using namespace boost;
 BOOST_AUTO_TEST_CASE (test_request_simple_header_get)
 {
 	std::string header = "GET / HTTP/1.1\r\n\r\n";
-	web::request req(header);
+	gud::request req(header);
 	BOOST_CHECK_EQUAL(req.method_s(), "GET");
 	BOOST_CHECK_EQUAL(req.path(), "/");
 }
@@ -22,7 +22,7 @@ BOOST_AUTO_TEST_CASE (test_request_simple_header_get)
 BOOST_AUTO_TEST_CASE (test_request_simple_header_post)
 {
 	std::string header = "POST /address HTTP/1.1\r\n\r\n";
-	web::request req(header);
+	gud::request req(header);
 	BOOST_CHECK_EQUAL(req.method_s(), "POST");
 	BOOST_CHECK_EQUAL(req.path(), "/address");
 }
@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE (test_request_simple_header_post)
 BOOST_AUTO_TEST_CASE (test_request_invalid_header_no_verb)
 {
 	std::string header;
-	BOOST_CHECK_THROW((web::request(header)), std::runtime_error);
+	BOOST_CHECK_THROW((gud::request(header)), std::runtime_error);
 }
 
 //____________________________________________________________________________//

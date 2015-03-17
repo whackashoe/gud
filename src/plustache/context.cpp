@@ -4,8 +4,8 @@
  * @author Daniel Schauenberg <d@unwiredcouch.com>
  */
 
-#include <web/plustache/context.hpp>
-#include <web/plustache/plustache_types.hpp>
+#include <gud/plustache/context.hpp>
+#include <gud/plustache/plustache_types.hpp>
 
 using namespace Plustache;
 

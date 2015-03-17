@@ -4,6 +4,6 @@ PROJECT (request)
 ADD_EXECUTABLE (request
 	request.cpp)
 TARGET_LINK_LIBRARIES (request
-	web)
+	gud)
 ADD_TEST (request
 	request)

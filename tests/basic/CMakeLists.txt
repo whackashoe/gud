@@ -4,6 +4,6 @@ PROJECT (basic)
 ADD_EXECUTABLE (basic
 	basic.cpp)
 TARGET_LINK_LIBRARIES (basic
-	web)
+	gud)
 ADD_TEST (basic
 	basic)

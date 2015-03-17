@@ -1,5 +1,5 @@
- #if !defined(WEB_CONFIG_H_INCLUDED_)
-#define WEB_CONFIG_H_INCLUDED_
+ #if !defined(GUD_CONFIG_H_INCLUDED_)
+#define GUD_CONFIG_H_INCLUDED_
 
 #include <sstream>
 #include <string>
@@ -7,17 +7,17 @@
 #include <cassert>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include <web/json.hpp>
+#include <gud/json.hpp>
 
-namespace web {
+namespace gud {
 
 /**
- * web settings
+ * gud settings
  */
 class config
 {
 private:
-    static web::json settings_;
+    static gud::json settings_;
 
 public:
 
@@ -27,15 +27,15 @@ public:
      * You can access deeper levels of config with dot notation
      * ie: "translations.english.introduction"
      */
-    static web::json get(std::string const & field);
+    static gud::json get(std::string const & field);
 
     /**
      * Push settings into field
      * you can use dot notation like above
      */
-    static void publish(std::string const & field, web::json conf);
+    static void publish(std::string const & field, gud::json conf);
 };
 
-} /* /namespace web */
+} /* /namespace gud */
 
-#endif /* WEB_CONFIG_H_INCLUDED_ */
+#endif /* GUD_CONFIG_H_INCLUDED_ */

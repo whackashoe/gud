@@ -1,5 +1,5 @@
-#if !defined(WEB_AUX_UTILS_H_INCLUDED_)
-#define WEB_AUX_UTILS_H_INCLUDED_
+#if !defined(GUD_AUX_UTILS_H_INCLUDED_)
+#define GUD_AUX_UTILS_H_INCLUDED_
 
 /**
  * Throws a runtime error exception with a text representation of the error.
@@ -14,4 +14,4 @@
 		throw std::runtime_error(s);                                         \
 	} while(0)
 
-#endif /* WEB_AUX_UTILS_H_INCLUDED_ */
+#endif /* GUD_AUX_UTILS_H_INCLUDED_ */

@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED (VERSION 2.6)
-PROJECT (web)
+PROJECT (gud)
 
 FIND_PACKAGE (Boost REQUIRED)
 
@@ -15,6 +15,6 @@ SET (SOURCES
     config.cpp
 )
 
-ADD_LIBRARY (web
+ADD_LIBRARY (gud
 	${SOURCES}
 )

@@ -1,9 +1,9 @@
-#if !defined(WEB_EXCEPTIONS_H_INCLUDED_)
-#define WEB_EXCEPTIONS_H_INCLUDED_
+#if !defined(GUD_EXCEPTIONS_H_INCLUDED_)
+#define GUD_EXCEPTIONS_H_INCLUDED_
 
 #include <exception>
 
-namespace web {
+namespace gud {
 
 /**
  * Throw instance of this class to return with specified HTTP response code.
@@ -26,6 +26,6 @@ public:
 	unsigned int error_code() const throw();
 };
 
-} /* /namespace web */
+} /* /namespace gud */
 
-#endif /* WEB_EXCEPTIONS_H_INCLUDED_ */
+#endif /* GUD_EXCEPTIONS_H_INCLUDED_ */

@@ -1,12 +1,12 @@
-#if !defined(WEB_RESPONSE_H_INCLUDED_)
-#define WEB_RESPONSE_H_INCLUDED_
+#if !defined(GUD_RESPONSE_H_INCLUDED_)
+#define GUD_RESPONSE_H_INCLUDED_
 
 #include <string>
 #include <map>
 #include <sstream>
-#include <web/config.hpp>
+#include <gud/config.hpp>
 
-namespace web {
+namespace gud {
 
 /**
  * HTTP response.
@@ -68,6 +68,6 @@ public:
 	unsigned int status_code();
 };
 
-} /* /namespace web */
+} /* /namespace gud */
 
-#endif /* WEB_RESPONSE_H_INCLUDED_ */
+#endif /* GUD_RESPONSE_H_INCLUDED_ */

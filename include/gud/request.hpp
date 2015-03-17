@@ -1,14 +1,14 @@
- #if !defined(WEB_REQUEST_H_INCLUDED_)
-#define WEB_REQUEST_H_INCLUDED_
+ #if !defined(GUD_REQUEST_H_INCLUDED_)
+#define GUD_REQUEST_H_INCLUDED_
 
 #include <string>
 #include <vector>
 #include <sstream>
 #include <stdexcept>
 #include <map>
-#include <web/log.hpp>
+#include <gud/log.hpp>
 
-namespace web {
+namespace gud {
 
 /**
  * HTTP request class.
@@ -69,6 +69,6 @@ public:
 	std::map<std::string, std::string> const & headers() const;
 };
 
-} /* /namespace web */
+} /* /namespace gud */
 
-#endif /* WEB_REQUEST_H_INCLUDED_ */
+#endif /* GUD_REQUEST_H_INCLUDED_ */

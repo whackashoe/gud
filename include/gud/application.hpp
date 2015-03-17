@@ -1,5 +1,5 @@
-#if !defined(WEB_APPLICATION_H_INCLUDED_)
-#define WEB_APPLICATION_H_INCLUDED_
+#if !defined(GUD_APPLICATION_H_INCLUDED_)
+#define GUD_APPLICATION_H_INCLUDED_
 
 #include <iostream>
 #include <string>
@@ -14,13 +14,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include <web/aux/utils.hpp>
-#include <web/request.hpp>
-#include <web/response.hpp>
-#include <web/exceptions.hpp>
-#include <web/log.hpp>
+#include <gud/aux/utils.hpp>
+#include <gud/request.hpp>
+#include <gud/response.hpp>
+#include <gud/exceptions.hpp>
+#include <gud/log.hpp>
 
-namespace web {
+namespace gud {
 
 /**
  * Main application logic class.
@@ -174,7 +174,7 @@ public:
 	void listen(unsigned short const port, const char * address = "127.0.0.1");
 };
 
-} /* /namespace web */
+} /* /namespace gud */
 
-#endif /* WEB_APPLICATION_H_INCLUDED_ */
+#endif /* GUD_APPLICATION_H_INCLUDED_ */
 
