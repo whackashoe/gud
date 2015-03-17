@@ -15,7 +15,7 @@ This is a continuance and going in a different direction from the good work of [
 * High test coverage.
 * Json reading and writing utility
 * Logging ability
-* Templating provided via mustache
+* Templating provided via mustache (unfinished)
 * Easy to use config system
 
 ## Requirements
@@ -63,5 +63,14 @@ int main(int argc, char * argv[])
 }
 ```
 
-Now just compile this code and point your web browser at http://localhost:3333/.
+## Installation
 
+```sh
+sudo apt-get update
+sudo apt-get install libboost-dev libboost-regex-dev cmake
+git clone https://github.com/whackashoe/gud.git
+cd gud/build
+cmake ..
+make
+./examples/helloworld/helloworld
+```
