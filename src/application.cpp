@@ -275,5 +275,7 @@ void application::listen(unsigned short const port, const char * address)
 				}
 			}
 		}
+
+		::close(client_socket);
 	}
 }
