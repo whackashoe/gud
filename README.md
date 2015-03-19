@@ -67,7 +67,7 @@ int main(int argc, char * argv[])
 
 ```sh
 sudo apt-get update
-sudo apt-get install libboost-dev libboost-regex-dev cmake
+sudo apt-get install libboost-dev libboost-regex-dev cmake libmysqlclient-dev libmysqlcppconn-dev
 git clone https://github.com/whackashoe/gud.git
 cd gud/build
 cmake ..

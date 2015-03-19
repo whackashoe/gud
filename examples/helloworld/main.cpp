@@ -1,4 +1,3 @@
-#include <iostream>
 #include <gud/gud.hpp>
 
 struct ExampleController

@@ -48,6 +48,17 @@ void application::bootup()
 	    	gud::log::set_level(spdlog::level::level_enum::off);
 	    }
 	}
+
+	bool db_connect = gud::config::get("app.db.connect");
+	if(db_connect) {
+		const std::string host = gud::config::get("app.db.host");
+		const int port = gud::config::get("app.db.port");
+		const std::string username = gud::config::get("app.db.username");
+		const std::string password = gud::config::get("app.db.password");
+		const std::string database = gud::config::get("app.db.database");
+
+		gud::db::connect(host, port, database, username, password);
+	}
 }
 
 void application::mount_route(request::http_method method, std::string const & path, view_function_t view)
@@ -219,6 +230,8 @@ void application::listen(unsigned short const port, const char * address)
 	if (::listen(server_socket_, 1) < 0) {
 		__throw_system_exception();
 	}
+
+	log::info("gud server listening on 127.0.0.1:{}", gud::config::get("server.port"));
 
 	while (true) {
 		struct sockaddr_in client_addr = {0};

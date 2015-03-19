@@ -1,6 +1,7 @@
 #if !defined(GUD_LOG_H_INCLUDED_)
 #define GUD_LOG_H_INCLUDED_
 
+#include <memory>
 #include <gud/spdlog/spdlog.h>
 
 namespace gud {

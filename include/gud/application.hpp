@@ -19,6 +19,7 @@
 #include <gud/response.hpp>
 #include <gud/exceptions.hpp>
 #include <gud/log.hpp>
+#include <gud/db.hpp>
 
 namespace gud {
 

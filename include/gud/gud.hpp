@@ -10,5 +10,6 @@
 #include <gud/log.hpp>
 #include <gud/view.hpp>
 #include <gud/config.hpp>
+#include <gud/db.hpp>
 
 #endif /* GUD_H_INCLUDED_ */

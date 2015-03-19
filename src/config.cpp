@@ -18,6 +18,14 @@ gud::json config::settings_ = {
         { "log", {
             { "format", "%+" },
             { "level", "debug" }
+        }},
+        { "db", {
+            { "connect", true },
+            { "host", "127.0.0.1" },
+            { "port", 3306 },
+            { "username", "root" },
+            { "password", "" },
+            { "database", "gud" }
         }}
     }}
 };

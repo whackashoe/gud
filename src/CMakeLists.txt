@@ -13,8 +13,9 @@ SET (SOURCES
     plustache/context.cpp
     plustache/template.cpp
     config.cpp
+    db.cpp
 )
 
-ADD_LIBRARY (gud
-	${SOURCES}
-)
+ADD_LIBRARY (gud ${SOURCES} )
+TARGET_LINK_LIBRARIES ( gud mysqlclient )
+TARGET_LINK_LIBRARIES ( gud mysqlcppconn )
