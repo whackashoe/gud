@@ -22,68 +22,62 @@ public:
     class results
     {
     public:
+        /**
+         * Helper class for extracting results from db
+         */
         class proxy
         {
         private:
             std::shared_ptr<sql::ResultSet> result_;
             std::string field_;
         public:
-            proxy(std::shared_ptr<sql::ResultSet> result, std::string const & field)
-             : result_(result)
-             , field_(field)
-             {}
+            proxy(std::shared_ptr<sql::ResultSet> result, std::string const & field);
 
-            operator bool() const
-            {
-                return result_->getBoolean(field_);
-            }
-
-            operator double() const
-            {
-                return result_->getDouble(field_);
-            }
-
-            operator std::int32_t() const
-            {
-                return result_->getInt(field_);
-            }
-
-            operator std::uint32_t() const
-            {
-                return result_->getUInt(field_);
-            }
-
-            operator std::int64_t() const
-            {
-                return result_->getInt64(field_);
-            }
-
-            operator std::uint64_t() const
-            {
-                return result_->getUInt64(field_);
-            }
-
-            operator std::string() const
-            {
-                return result_->getString(field_);
-            }
-
-            operator std::istream *() const
-            {
-                return result_->getBlob(field_);
-            }
+            /**
+             * These are functions to automatically convert your data.
+             * They will be invoked from operator[] on results
+             * To use correct one, ensure left hand side of assignment is correct!
+             */
+            operator bool() const;
+            operator double() const;
+            operator std::int32_t() const;
+            operator std::uint32_t() const;
+            operator std::int64_t() const;
+            operator std::uint64_t() const;
+            operator std::string() const;
+            operator std::istream*() const; //blob
         };
     private:
         std::shared_ptr<sql::ResultSet> result_;
     public:
-        typedef typename std::shared_ptr<sql::ResultSet> iterator;
-        typedef typename std::shared_ptr<const sql::ResultSet> const_iterator;
-
+        /**
+          * Don't bother calling this manually
+          * You will get back results from calling db::query
+          */
         results(sql::ResultSet * result);
 
+        /**
+         * Access / extract per column data
+         * make left hand side be correct datatype
+         * ie: std::string name = result["name"]; //assuming name is string
+         */
         proxy operator[](std::string const & field) const;
+
+        /**
+         * Number of rows
+         */
         std::size_t count() const;
+
+        /**
+         * Increases internal pointer to next row
+         * Returns true if successful
+         */
         bool next();
+
+        /**
+         * Preferred way to iterate through results of query
+         * Pass a function in, it will be called as long as `next()` is true
+         */
         void each(std::function<void (db::results)> const & fn);
     };
 private:
@@ -91,8 +85,27 @@ private:
     static std::unique_ptr<sql::Connection> con_;
 
 public:
-    static void connect(std::string const & host, unsigned int port, std::string const & database, std::string const & username, std::string const & password);
+    /**
+     * Performs initial connection
+     * this will automatically be called if app.db.connect is set to true in config
+     */
+    static void connect(
+        std::string const & host,
+        unsigned int const port,
+        std::string const & database,
+        std::string const & username,
+        std::string const & password
+    );
+
+    /**
+     * Execute a query on the database
+     * Returns results
+     */
     static db::results query(std::string const & query);
+
+    /**
+     * Execute a query on the database
+     */
     static void execute(std::string const & query);
 };
 
