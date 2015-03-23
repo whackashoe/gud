@@ -20,33 +20,63 @@ class db
 public:
     class results
     {
-    private:
-        std::unique_ptr<sql::ResultSet> result_;
     public:
-        typedef typename std::unique_ptr<sql::ResultSet> iterator;
-        typedef typename std::unique_ptr<const sql::ResultSet> const_iterator;
+        class proxy
+        {
+        private:
+            std::shared_ptr<sql::ResultSet> result_;
+            std::string field_;
+        public:
+            proxy(std::shared_ptr<sql::ResultSet> result, std::string const & field)
+             : result_(result)
+             , field_(field)
+             {}
+
+            operator bool() const
+            {
+                return result_->getBoolean(field_);
+            }
+
+            operator int() const
+            {
+                return result_->getInt(field_);
+            }
+
+            operator unsigned int() const
+            {
+                return result_->getUInt(field_);
+            }
+
+            operator long() const
+            {
+                return result_->getInt64(field_);
+            }
+
+            operator unsigned long() const
+            {
+                return result_->getUInt64(field_);
+            }
+
+            operator std::string() const
+            {
+                return result_->getString(field_);
+            }
+
+            operator std::istream *() const
+            {
+                return result_->getBlob(field_);
+            }
+        };
+    private:
+        std::shared_ptr<sql::ResultSet> result_;
+    public:
+        typedef typename std::shared_ptr<sql::ResultSet> iterator;
+        typedef typename std::shared_ptr<const sql::ResultSet> const_iterator;
 
         results(sql::ResultSet * result);
 
-        /*
-        iterator begin();
-        const_iterator begin() const;
-        const_iterator cbegin() const;
-        iterator end();
-        const_iterator end() const;
-        const_iterator cend() const;
-
-        bool operator==(results const &);
-        bool operator!=(results const &);
-        results operator++();
-        results operator--();
-        */
-
-        template <typename T>
-        T get(std::string const & field);
-
-        template <typename T>
-        std::string operator[](std::string const & field);
+        proxy operator[](std::string const & field) const;
+        std::size_t count() const;
     };
 private:
     static sql::Driver * driver_;
