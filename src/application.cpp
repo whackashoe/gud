@@ -214,7 +214,7 @@ void application::listen(unsigned short const port, const char * address)
 		__throw_system_exception();
 	}
 
-	struct sockaddr_in serv_addr = {0};
+	struct sockaddr_in serv_addr = {0, 0, 0, 0};
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_addr.s_addr = INADDR_ANY;
 	serv_addr.sin_port = htons(port);
@@ -234,7 +234,7 @@ void application::listen(unsigned short const port, const char * address)
 	log::info("gud server listening on 127.0.0.1:{}", gud::config::get("server.port"));
 
 	while (true) {
-		struct sockaddr_in client_addr = {0};
+		struct sockaddr_in client_addr = {0, 0, 0, 0};
 		socklen_t client_len = sizeof(client_addr);
 		const int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
 
