@@ -37,22 +37,27 @@ public:
                 return result_->getBoolean(field_);
             }
 
-            operator int() const
+            operator double() const
+            {
+                return result_->getDouble(field_);
+            }
+
+            operator std::int32_t() const
             {
                 return result_->getInt(field_);
             }
 
-            operator unsigned int() const
+            operator std::uint32_t() const
             {
                 return result_->getUInt(field_);
             }
 
-            operator long() const
+            operator std::int64_t() const
             {
                 return result_->getInt64(field_);
             }
 
-            operator unsigned long() const
+            operator std::uint64_t() const
             {
                 return result_->getUInt64(field_);
             }
