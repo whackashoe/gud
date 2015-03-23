@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <functional>
 #include <cppconn/driver.h>
 #include <cppconn/exception.h>
 #include <cppconn/resultset.h>
@@ -82,6 +83,8 @@ public:
 
         proxy operator[](std::string const & field) const;
         std::size_t count() const;
+        bool next();
+        void each(std::function<void (db::results)> const & fn);
     };
 private:
     static sql::Driver * driver_;
