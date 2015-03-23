@@ -244,46 +244,52 @@ void application::listen(unsigned short const port, const char * address)
 
 		// New client connected
 		std::vector<char> raw_request(65535); // Need more?
-		unsigned int pos = 0;
+		std::size_t socket_request_pos = 0;
 
-		while (pos < raw_request.size()) {
-			const int n = ::read(client_socket, &raw_request[pos], raw_request.size() - pos);
+		while (socket_request_pos < raw_request.size()) {
+			const int socket_read_result = ::read(client_socket, &raw_request[socket_request_pos], raw_request.size() - socket_request_pos);
 
-			if (n < 0) {
+			if (socket_read_result < 0) {
 				// Connection reset
 				break;
-			} else if (n == 0) {
+			} else if (socket_read_result == 0) {
 				// Client disconnected
 				break;
 			}
+
 			// Find headers
-			pos += n;
-			for (unsigned int i = 3; i < pos; i++) {
-				if ((raw_request[i - 3] == '\r') &&
-					(raw_request[i - 2] == '\n') &&
-					(raw_request[i - 1] == '\r') &&
-					(raw_request[i]     == '\n')
+			socket_request_pos += socket_read_result;
+			if(socket_request_pos < 4) {
+				// At minimum we need \r\n\r\n to indicate no headers
+				continue;
+			}
+
+			for (std::size_t i = 0; i < socket_request_pos - 3; ++i) {
+				if ((raw_request[i + 0] == '\r') &&
+					(raw_request[i + 1] == '\n') &&
+					(raw_request[i + 2] == '\r') &&
+					(raw_request[i + 3] == '\n')
 				) {
-					// Found headers.
-					std::string headers(raw_request.begin(), raw_request.end());
-					request req(headers); // can throw
+					// Found header -> body break.
+					std::string str_req(raw_request.begin(), raw_request.end());
+					request req(str_req); // can throw
 
 					response res;
 					std::string const & data = process(req, res);
 
 					// Flush raw response (with headers) to client.
-					std::vector<char> buf(data.begin(), data.end());
+					std::vector<char> const response_buf(data.begin(), data.end());
 
-					unsigned int pos = 0;
-					while (pos < buf.size()) {
-						int n = ::send(client_socket, &buf[pos], buf.size() - pos, 0);
+					std::size_t socket_write_pos = 0;
+					while (socket_write_pos < response_buf.size()) {
+						const int socket_write_result = ::send(client_socket, &response_buf[socket_write_pos], response_buf.size() - socket_write_pos, 0);
 
-						if (n < 0) {
+						if (socket_write_result < 0) {
 							gud::log::info("Unable to write data to socket: {}", strerror(errno));
 							break;
 						}
 
-						pos += n;
+						socket_write_pos += socket_write_result;
 					}
 				}
 			}
