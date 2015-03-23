@@ -52,7 +52,6 @@ int main(int argc, char * argv[])
     		res.stream() << "logged";
 		});
 
-		gud::log::info("gud server started on 127.0.0.1:{}", gud::config::get("server.port"));
 		app.listen(gud::config::get("server.port"));
 	} catch (std::exception const & e) {
 		gud::log::error("Caught exception: {}", e.what());
