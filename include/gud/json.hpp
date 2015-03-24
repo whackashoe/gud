@@ -3,8 +3,8 @@
 @copyright The code is licensed under the MIT License
            <http://opensource.org/licenses/MIT>,
            Copyright (c) 2013-2015 Niels Lohmann.
-@author Niels Lohmann <http://nlohmann.me>
-@see https://github.com/nlohmann/json
+@author Niels Lohmann <http://gud.me>
+@see https://github.com/gud/json
 */
 
 /*!
@@ -30,7 +30,6 @@ iterators allow a ReversibleContainer to be iterated over in reverse.
 #if !defined(GUD_JSON_H_INCLUDED_)
 #define GUD_JSON_H_INCLUDED_
 
-
 #include <algorithm>
 #include <cmath>
 #include <functional>
@@ -49,7 +48,7 @@ iterators allow a ReversibleContainer to be iterated over in reverse.
 
 /*!
 @brief namespace for Niels Lohmann
-@see https://github.com/nlohmann
+@see https://github.com/gud
 */
 namespace gud
 {
@@ -411,7 +410,7 @@ class basic_json
     {
         Allocator<object_t> alloc;
         m_value.object = alloc.allocate(1);
-        alloc.construct(m_value.object, value.begin(), value.end());
+        alloc.construct(m_value.object, std::begin(value), std::end(value));
     }
 
     /// create an array (explicit)
@@ -439,7 +438,7 @@ class basic_json
     {
         Allocator<array_t> alloc;
         m_value.array = alloc.allocate(1);
-        alloc.construct(m_value.array, value.begin(), value.end());
+        alloc.construct(m_value.array, std::begin(value), std::end(value));
     }
 
     /// create a string (explicit)
@@ -1050,7 +1049,6 @@ class basic_json
         return m_value.object->operator[](key);
     }
 
-
     /// find an element in an object
     inline iterator find(typename object_t::key_type key)
     {
@@ -1075,6 +1073,13 @@ class basic_json
         }
 
         return result;
+    }
+
+    /// returns the number of occurrences of a key in an object
+    inline size_type count(typename object_t::key_type key) const
+    {
+        // return 0 for all nonobject types
+        return (m_type == value_t::object) ? m_value.object->count(key) : 0;
     }
 
 
@@ -2035,6 +2040,9 @@ class basic_json
     /// a random access iterator for the basic_json class
     class iterator : public std::iterator<std::random_access_iterator_tag, basic_json>
     {
+        // allow basic_json class to access m_it
+        friend class basic_json;
+
       public:
         /// the type of the values when the iterator is dereferenced
         using value_type = basic_json::value_type;
@@ -2073,11 +2081,22 @@ class basic_json
             }
         }
 
+        /// copy constructor
+        inline iterator(const iterator& other) noexcept
+            : m_object(other.m_object), m_it(other.m_it)
+        {}
+
         /// copy assignment
-        inline iterator& operator=(const iterator& other) noexcept
+        inline iterator& operator=(iterator other) noexcept (
+            std::is_nothrow_move_constructible<pointer>::value and
+            std::is_nothrow_move_assignable<pointer>::value and
+            std::is_nothrow_move_constructible<internal_iterator<typename array_t::iterator, typename object_t::iterator>>::value
+            and
+            std::is_nothrow_move_assignable<internal_iterator<typename array_t::iterator, typename object_t::iterator>>::value
+        )
         {
-            m_object = other.m_object;
-            m_it = other.m_it;
+            std::swap(m_object, other.m_object);
+            std::swap(m_it, other.m_it);
             return *this;
         }
 
@@ -2503,7 +2522,7 @@ class basic_json
             }
         }
 
-      public:
+      private:
         /// associated JSON instance
         pointer m_object = nullptr;
         /// the actual iterator of the associated instance
@@ -2513,6 +2532,9 @@ class basic_json
     /// a const random access iterator for the basic_json class
     class const_iterator : public std::iterator<std::random_access_iterator_tag, const basic_json>
     {
+        // allow basic_json class to access m_it
+        friend class basic_json;
+
       public:
         /// the type of the values when the iterator is dereferenced
         using value_type = basic_json::value_type;
@@ -2576,11 +2598,22 @@ class basic_json
             }
         }
 
+        /// copy constructor
+        inline const_iterator(const const_iterator& other) noexcept
+            : m_object(other.m_object), m_it(other.m_it)
+        {}
+
         /// copy assignment
-        inline const_iterator& operator=(const const_iterator& other) noexcept
+        inline const_iterator& operator=(const_iterator other) noexcept(
+            std::is_nothrow_move_constructible<pointer>::value and
+            std::is_nothrow_move_assignable<pointer>::value and
+            std::is_nothrow_move_constructible<internal_iterator<typename array_t::const_iterator, typename object_t::const_iterator>>::value
+            and
+            std::is_nothrow_move_assignable<internal_iterator<typename array_t::const_iterator, typename object_t::const_iterator>>::value
+        )
         {
-            m_object = other.m_object;
-            m_it = other.m_it;
+            std::swap(m_object, other.m_object);
+            std::swap(m_it, other.m_it);
             return *this;
         }
 
@@ -3068,7 +3101,8 @@ class basic_json
 
         @see <http://en.wikipedia.org/wiki/UTF-8#Sample_code>
         */
-        inline static string_t to_unicode(const size_t codepoint1, const size_t codepoint2 = 0)
+        inline static string_t to_unicode(const size_t codepoint1,
+                                          const size_t codepoint2 = 0)
         {
             string_t result;
 
@@ -3096,7 +3130,7 @@ class basic_json
 
             if (codepoint <= 0x7f)
             {
-                // 1-byte characters: 0xxxxxxx (ASCI)
+                // 1-byte characters: 0xxxxxxx (ASCII)
                 result.append(1, static_cast<typename string_t::value_type>(codepoint));
             }
             else if (codepoint <= 0x7ff)
