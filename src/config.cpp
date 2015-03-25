@@ -33,8 +33,7 @@ gud::json config::settings_ = {
 
 gud::json config::get(std::string const & field)
 {
-    std::vector<std::string> tokens;
-    boost::split(tokens, field, boost::is_any_of("."), boost::token_compress_on);
+    std::vector<std::string> tokens = util::undot(field);
 
     gud::json * it = &settings_;
     for(size_t i=0; i < tokens.size(); ++i) {
@@ -50,8 +49,7 @@ gud::json config::get(std::string const & field)
 
 void config::publish(std::string const & field, gud::json conf)
 {
-    std::vector<std::string> tokens;
-    boost::split(tokens, field, boost::is_any_of("."), boost::token_compress_on);
+    std::vector<std::string> tokens = util::undot(field);
 
     gud::json * it = &settings_;
     for(size_t i=0; i < tokens.size() - 1; ++i) {

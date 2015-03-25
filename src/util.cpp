@@ -12,3 +12,10 @@ std::string util::rfc1123_datetime(time_t time)
 
     return buffer;
 }
+
+std::vector<std::string> util::undot(std::string const & field)
+{
+    std::vector<std::string> tokens;
+    boost::split(tokens, field, boost::is_any_of("."), boost::token_compress_on);
+    return tokens;
+}

@@ -3,6 +3,9 @@
 
 #include <string>
 #include <ctime>
+#include <vector>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 namespace gud {
 
@@ -13,6 +16,7 @@ class util
 {
 public:
     static std::string rfc1123_datetime(time_t time);
+    static std::vector<std::string> undot(std::string const & field);
 };
 
 } /* /namespace gud */

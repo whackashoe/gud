@@ -5,9 +5,8 @@
 #include <string>
 #include <vector>
 #include <cassert>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/algorithm/string/classification.hpp>
 #include <gud/json.hpp>
+#include <gud/util.hpp>
 
 namespace gud {
 
