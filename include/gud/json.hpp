@@ -27,11 +27,12 @@ iterators allow a ReversibleContainer to be iterated over in reverse.
 @see http://en.cppreference.com/w/cpp/concept/ReversibleContainer
 */
 
-#if !defined(GUD_JSON_H_INCLUDED_)
+#ifndef GUD_JSON_H_INCLUDED_
 #define GUD_JSON_H_INCLUDED_
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <functional>
 #include <initializer_list>
 #include <iomanip>
@@ -410,7 +411,9 @@ class basic_json
     {
         Allocator<object_t> alloc;
         m_value.object = alloc.allocate(1);
-        alloc.construct(m_value.object, std::begin(value), std::end(value));
+        using std::begin;
+        using std::end;
+        alloc.construct(m_value.object, begin(value), end(value));
     }
 
     /// create an array (explicit)
@@ -438,7 +441,9 @@ class basic_json
     {
         Allocator<array_t> alloc;
         m_value.array = alloc.allocate(1);
-        alloc.construct(m_value.array, std::begin(value), std::end(value));
+        using std::begin;
+        using std::end;
+        alloc.construct(m_value.array, begin(value), end(value));
     }
 
     /// create a string (explicit)
@@ -1049,6 +1054,18 @@ class basic_json
         return m_value.object->operator[](key);
     }
 
+    /// remove element from an object given a key
+    inline size_type erase(const typename object_t::key_type& key)
+    {
+        // at only works for objects
+        if (m_type != value_t::object)
+        {
+            throw std::runtime_error("cannot use at with " + type_name());
+        }
+
+        return m_value.object->erase(key);
+    }
+
     /// find an element in an object
     inline iterator find(typename object_t::key_type key)
     {
@@ -1570,11 +1587,11 @@ class basic_json
             {
                 if (rhs.type() == value_t::number_integer)
                 {
-                    return lhs.m_value.number_float == static_cast<number_float_t>(rhs.m_value.number_integer);
+                    return approx(lhs.m_value.number_float, static_cast<number_float_t>(rhs.m_value.number_integer));
                 }
                 if (rhs.type() == value_t::number_float)
                 {
-                    return lhs.m_value.number_float == rhs.m_value.number_float;
+                    return approx(lhs.m_value.number_float, rhs.m_value.number_float);
                 }
                 break;
             }
@@ -1720,6 +1737,12 @@ class basic_json
     static basic_json parse(const string_t& s)
     {
         return parser(s).parse();
+    }
+
+    /// deserialize from stream
+    static basic_json parse(std::istream& i)
+    {
+        return parser(i).parse();
     }
 
     /// deserialize from stream
@@ -1882,7 +1905,9 @@ class basic_json
     recursively. Note that
 
     - strings and object keys are escaped using escape_string()
-    - numbers are converted to a string before output using std::to_string()
+    - integer numbers are converted to a string before output using
+      std::to_string()
+    - floating-point numbers are converted to a string using "%g" format
 
     @param prettyPrint    whether the output shall be pretty-printed
     @param indentStep     the indent level
@@ -1990,7 +2015,12 @@ class basic_json
 
             case (value_t::number_float):
             {
-                return std::to_string(m_value.number_float);
+                // 15 digits of precision allows round-trip IEEE 754
+                // string->double->string
+                const auto sz = static_cast<unsigned int>(std::snprintf(nullptr, 0, "%.15g", m_value.number_float));
+                std::vector<char> buf(sz + 1);
+                std::snprintf(&buf[0], buf.size(), "%.15g", m_value.number_float);
+                return string_t(buf.data());
             }
 
             default:
@@ -1998,6 +2028,13 @@ class basic_json
                 return "null";
             }
         }
+    }
+
+    /// "equality" comparison for floating point numbers
+    template<typename T>
+    inline static bool approx(const T a, const T b)
+    {
+        return not (a > b or a < b);
     }
 
 
@@ -2100,6 +2137,7 @@ class basic_json
             return *this;
         }
 
+      private:
         /// set the iterator to the first value
         inline void set_begin() noexcept
         {
@@ -2157,6 +2195,7 @@ class basic_json
             }
         }
 
+      public:
         /// return a reference to the value pointed to by the iterator
         inline reference operator*()
         {
@@ -2522,6 +2561,27 @@ class basic_json
             }
         }
 
+        inline typename object_t::key_type key() const
+        {
+            switch (m_object->m_type)
+            {
+                case (basic_json::value_t::object):
+                {
+                    return m_it.object_iterator->first;
+                }
+
+                default:
+                {
+                    throw std::domain_error("cannot use key() for non-object iterators");
+                }
+            }
+        }
+
+        inline reference value()
+        {
+            return operator*();
+        }
+
       private:
         /// associated JSON instance
         pointer m_object = nullptr;
@@ -2617,6 +2677,7 @@ class basic_json
             return *this;
         }
 
+      private:
         /// set the iterator to the first value
         inline void set_begin() noexcept
         {
@@ -2674,6 +2735,7 @@ class basic_json
             }
         }
 
+      public:
         /// return a reference to the value pointed to by the iterator
         inline reference operator*() const
         {
@@ -3034,6 +3096,27 @@ class basic_json
             }
         }
 
+        inline typename object_t::key_type key() const
+        {
+            switch (m_object->m_type)
+            {
+                case (basic_json::value_t::object):
+                {
+                    return m_it.object_iterator->first;
+                }
+
+                default:
+                {
+                    throw std::domain_error("cannot use key() for non-object iterators");
+                }
+            }
+        }
+
+        inline reference value() const
+        {
+            return operator*();
+        }
+
       private:
         /// associated JSON instance
         pointer m_object = nullptr;
@@ -3081,10 +3164,19 @@ class basic_json
 
         /// constructor with a given buffer
         inline lexer(const string_t& s) noexcept
-            : m_content(reinterpret_cast<const lexer_char_t*>(s.c_str()))
+            : m_stream(nullptr), m_buffer(s)
         {
+            m_content = reinterpret_cast<const lexer_char_t*>(s.c_str());
             m_start = m_cursor = m_content;
             m_limit = m_content + s.size();
+        }
+        inline lexer(std::istream* s) noexcept
+            : m_stream(s)
+        {
+            getline(*m_stream, m_buffer);
+            m_content = reinterpret_cast<const lexer_char_t*>(m_buffer.c_str());
+            m_start = m_cursor = m_content;
+            m_limit = m_content + m_buffer.size();
         }
 
         /// default constructor
@@ -3211,7 +3303,7 @@ class basic_json
         inline token_type scan() noexcept
         {
             // pointer for backtracking information
-            const lexer_char_t* m_marker = nullptr;
+            m_marker = nullptr;
 
             // remember the begin of the token
             m_start = m_cursor;
@@ -3256,6 +3348,10 @@ class basic_json
                     64,  64,  64,  64,  64,  64,  64,  64,
                 };
 
+                if ((m_limit - m_cursor) < 5)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= '9')
                 {
@@ -3387,6 +3483,10 @@ basic_json_parser_3:
                 }
 basic_json_parser_4:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
 basic_json_parser_5:
                 if (yybm[0 + yych] & 32)
@@ -3513,6 +3613,10 @@ basic_json_parser_29:
                 goto basic_json_parser_19;
 basic_json_parser_30:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
 basic_json_parser_31:
                 if (yybm[0 + yych] & 64)
@@ -3540,6 +3644,10 @@ basic_json_parser_32:
                 }
 basic_json_parser_33:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= 'e')
                 {
@@ -3620,6 +3728,10 @@ basic_json_parser_34:
                 }
 basic_json_parser_36:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= '@')
                 {
@@ -3649,6 +3761,10 @@ basic_json_parser_36:
                 }
 basic_json_parser_37:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= '@')
                 {
@@ -3678,6 +3794,10 @@ basic_json_parser_37:
                 }
 basic_json_parser_38:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= '@')
                 {
@@ -3707,6 +3827,10 @@ basic_json_parser_38:
                 }
 basic_json_parser_39:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= '@')
                 {
@@ -3739,6 +3863,10 @@ basic_json_parser_39:
 basic_json_parser_40:
                 yyaccept = 1;
                 m_marker = ++m_cursor;
+                if ((m_limit - m_cursor) < 3)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
 basic_json_parser_41:
                 if (yybm[0 + yych] & 128)
@@ -3812,6 +3940,10 @@ basic_json_parser_44:
                 }
 basic_json_parser_45:
                 ++m_cursor;
+                if (m_limit <= m_cursor)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= '/')
                 {
@@ -3825,6 +3957,10 @@ basic_json_parser_45:
 basic_json_parser_47:
                 yyaccept = 1;
                 m_marker = ++m_cursor;
+                if ((m_limit - m_cursor) < 3)
+                {
+                    yyfill();
+                };
                 yych = *m_cursor;
                 if (yych <= 'D')
                 {
@@ -3925,6 +4061,31 @@ basic_json_parser_59:
                 }
             }
 
+
+        }
+
+        /// append data from the stream to the internal buffer
+        inline void yyfill() noexcept
+        {
+            if (not m_stream or not * m_stream)
+            {
+                return;
+            }
+
+            const ssize_t offset_start = m_start - m_content;
+            const ssize_t offset_marker = m_marker - m_start;
+            const ssize_t offset_cursor = m_cursor - m_start;
+
+            m_buffer.erase(0, static_cast<size_t>(offset_start));
+            std::string line;
+            std::getline(*m_stream, line);
+            m_buffer += line;
+
+            m_content = reinterpret_cast<const lexer_char_t*>(m_buffer.c_str());
+            m_start  = m_content;
+            m_marker = m_start + offset_marker;
+            m_cursor = m_start + offset_cursor;
+            m_limit  = m_start + m_buffer.size() - 1;
         }
 
         /// return string representation of last read token
@@ -4089,10 +4250,16 @@ basic_json_parser_59:
         }
 
       private:
+        /// optional input stream
+        std::istream* m_stream;
         /// the buffer
+        string_t m_buffer;
+        /// the buffer pointer
         const lexer_char_t* m_content = nullptr;
-        /// pointer to he beginning of the current symbol
+        /// pointer to the beginning of the current symbol
         const lexer_char_t* m_start = nullptr;
+        /// pointer for backtracking information
+        const lexer_char_t* m_marker = nullptr;
         /// pointer to the current symbol
         const lexer_char_t* m_cursor = nullptr;
         /// pointer to the end of the buffer
@@ -4106,25 +4273,15 @@ basic_json_parser_59:
     {
       public:
         /// constructor for strings
-        inline parser(const string_t& s) : m_buffer(s), m_lexer(m_buffer)
+        inline parser(const string_t& s) : m_lexer(s)
         {
             // read first token
             get_token();
         }
 
         /// a parser reading from an input stream
-        inline parser(std::istream& _is)
+        inline parser(std::istream& _is) : m_lexer(&_is)
         {
-            while (_is)
-            {
-                string_t input_line;
-                std::getline(_is, input_line);
-                m_buffer += input_line;
-            }
-
-            // initializer lexer
-            m_lexer = lexer(m_buffer);
-
             // read first token
             get_token();
         }
@@ -4267,7 +4424,7 @@ basic_json_parser_59:
 
                     // check if conversion loses precision
                     const auto int_val = static_cast<number_integer_t>(float_val);
-                    if (float_val == int_val)
+                    if (approx(float_val, static_cast<number_float_t>(int_val)))
                     {
                         // we basic_json not lose precision -> return int
                         return basic_json(int_val);
@@ -4310,8 +4467,6 @@ basic_json_parser_59:
         }
 
       private:
-        /// the buffer
-        string_t m_buffer;
         /// the type of the last read token
         typename lexer::token_type last_token = lexer::token_type::uninitialized;
         /// the lexer
