@@ -17,6 +17,7 @@ This is a continuance and going in a different direction from the good work of [
 * Logging ability
 * Templating provided via mustache (unfinished)
 * Easy to use config system
+* Mysql database handler
 
 ## Requirements
 
