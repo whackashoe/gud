@@ -38,6 +38,8 @@ private:
 	std::string method_;
 	std::string path_;
 	std::map<std::string, std::string> headers_;
+	std::string raw_headers_;
+	std::string raw_body_;
 
 public:
 	/**
@@ -57,6 +59,11 @@ public:
 	std::string const & path() const;
 
 	/**
+	 * Get body of request
+	 */
+	std::string const & raw_body() const;
+
+	/**
 	 * Construct the request object.
 	 *
 	 * @param headers Raw HTTP request headers.
@@ -67,6 +74,11 @@ public:
 	 * Get a map of all request headers
 	 */
 	std::map<std::string, std::string> const & headers() const;
+
+	/**
+	 * Get raw request headers
+	 */
+	std::string const & raw_headers() const;
 };
 
 } /* /namespace gud */

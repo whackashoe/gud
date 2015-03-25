@@ -2,37 +2,49 @@
 
 using namespace gud;
 
-request::request(std::string const & headers)
+request::request(std::string const & str_req)
 {
-	std::stringstream ss(headers);
+	std::stringstream ss(str_req);
 	std::string line;
 
-	for(int i=0; std::getline(ss, line); ++i) {
+	// Status Line
+	if(std::getline(ss, line)) {
 		std::stringstream ls(line);
 
-		if(i == 0) {
-			// status line
-
-			for(auto & m: methods) {
-				if(line.find(m.first) == 0) {
-					ls >> method_ >> path_;
-				}
-			}
-		} else {
-			// header lines
-			const std::string delimiter = ": ";
-			const auto dpos = line.find(delimiter);
-			if(dpos != std::string::npos) {
-				const std::string field = line.substr(0, dpos);
-				const std::string value = (line.length() > dpos+delimiter.size())
-					? line.substr(dpos+delimiter.length(), line.length())
-					: "";
-
-				headers_[field] = value;
-			} else {
-				gud::log::trace("Request header missing delimiter");
+		for(auto & m: methods) {
+			if(line.find(m.first) == 0) {
+				ls >> method_ >> path_;
 			}
 		}
+	}
+
+	// Parse Headers
+	while(std::getline(ss, line)) {
+		raw_headers_ += line + "\n";
+		std::stringstream ls(line);
+
+		// header lines
+		const std::string delimiter = ": ";
+		const auto dpos = line.find(delimiter);
+
+		if(dpos != std::string::npos) {
+			const std::string field = line.substr(0, dpos);
+			const std::string value = (line.length() > dpos+delimiter.size())
+				? line.substr(dpos+delimiter.length(), line.length())
+				: "";
+
+			headers_[field] = value;
+		} else if(line == "\r") {
+			// Start of request body
+			break;
+		} else {
+			gud::log::trace("Request header missing delimiter");
+		}
+	}
+
+	// Parse Body
+	while(std::getline(ss, line)) {
+		raw_body_ += line + "\n";
 	}
 
 	if (method_.empty()) {
@@ -74,4 +86,14 @@ request::http_method request::method() const
 std::map<std::string, std::string> const & request::headers() const
 {
 	return headers_;
+}
+
+std::string const & request::raw_headers() const
+{
+	return raw_headers_;
+}
+
+std::string const & request::raw_body() const
+{
+	return raw_body_;
 }
