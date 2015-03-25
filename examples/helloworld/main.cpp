@@ -25,9 +25,24 @@ struct ExampleController
 
 int main(int argc, char * argv[])
 {
+	// We can modify or set any settings at any time easily
 	gud::config::publish("server.port", 4444);
 
+	// Change this to the path of your gud build
+	gud::config::publish("app.paths.root", "/home/pizzapi/code/gud/build/examples/helloworld");
+	gud::config::publish("app.paths.views", "/views");
+
+	// Initialize our application server
 	gud::application app(argc, argv);
+
+	// Uncomment this and try it after creating and populating database
+	/*
+		auto res = gud::db::query("SELECT * FROM tbl");
+		res.each([](gud::db::results row) {
+			std::string test = row["name"];
+			std::cout << test << std::endl;
+		});
+	*/
 
 	try {
 		// You can use lambda expressions
@@ -35,14 +50,21 @@ int main(int argc, char * argv[])
 			res.stream() << "Hello world!";
 		});
 
+		// Get input data from post request and print it out
+		app.post("/post", [](gud::request & req, gud::response & res) {
+			res.stream()
+				<< "headers:\n\n" << req.raw_headers()
+				<< "body:\n\n"    << req.raw_body();
+		});
+
 		// Or simply reference a public static method in a controller
 		app.get("/json", ExampleController::grab_data);
 
 		// Render a view easily
 		app.get("/view", [](gud::request & req, gud::response & res) {
-			res.stream() << gud::view::make("lol", {
+			res.stream() << gud::view::make("home.mustache", {
 				{ "name", "Gloop" },
-				{ "age",  4 }
+				{ "age",  std::to_string(4) }
 			});
 		});
 
