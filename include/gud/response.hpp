@@ -5,6 +5,7 @@
 #include <map>
 #include <sstream>
 #include <gud/config.hpp>
+#include <gud/util.hpp>
 
 namespace gud {
 
@@ -25,6 +26,11 @@ private:
 	 * All stored headers
 	 */
 	std::map<std::string, std::string> headers_;
+
+	/**
+	 * Raw text of headers
+	 */
+	std::string raw_headers_;
 
 	/**
 	 * HTTP Status Code
@@ -56,6 +62,16 @@ public:
 	 * Get a map of all request headers
 	 */
 	std::map<std::string, std::string> const & headers() const;
+
+	/**
+	 * Get raw headers as string
+	 */
+	std::string const raw_headers() const;
+
+	/**
+	 * Get raw body as string
+	 */
+	std::string const raw_body() const;
 
 	/**
 	 * Set the status code for response

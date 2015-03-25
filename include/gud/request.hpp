@@ -24,6 +24,7 @@ public:
 		UNKNOWN,
 		WILDCARD,
 		OPTIONS,
+		TRACE,
 		GET,
 		HEAD,
 		PUT,

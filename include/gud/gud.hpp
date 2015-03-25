@@ -11,5 +11,6 @@
 #include <gud/view.hpp>
 #include <gud/config.hpp>
 #include <gud/db.hpp>
+#include <gud/util.hpp>
 
 #endif /* GUD_H_INCLUDED_ */

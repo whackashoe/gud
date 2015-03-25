@@ -14,6 +14,7 @@ SET (SOURCES
     plustache/template.cpp
     config.cpp
     db.cpp
+    util.cpp
 )
 
 ADD_LIBRARY (gud ${SOURCES} )

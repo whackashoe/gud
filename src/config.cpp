@@ -6,7 +6,8 @@ gud::json config::settings_ = {
     { "server", {
         { "port", 3333 },
         { "name", "gud" },
-        { "host", "127.0.0.1" }
+        { "host", "127.0.0.1" },
+        { "allow_trace", true }
     }},
     { "app", {
         { "debug", true },

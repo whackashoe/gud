@@ -20,6 +20,7 @@
 #include <gud/exceptions.hpp>
 #include <gud/log.hpp>
 #include <gud/db.hpp>
+#include <gud/util.hpp>
 
 namespace gud {
 

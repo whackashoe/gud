@@ -9,17 +9,6 @@ application::application(int argc, char * argv[])
 	bootup();
 }
 
-std::string application::rfc1123_datetime(time_t time)
-{
-	struct tm * timeinfo;
-    char buffer [80];
-
-    timeinfo = gmtime ( &time );
-    strftime (buffer,80,"%a, %d %b %Y %H:%M:%S GMT",timeinfo);
-
-    return buffer;
-}
-
 void application::bootup()
 {
 	gud::log::set_pattern(gud::config::get("app.log.format"));
@@ -137,7 +126,19 @@ application::view_function_t application::get_route(request::http_method method,
 
 std::string application::process(request & req, response & res) throw()
 {
+	std::stringstream output;
+
+	if(config::get("server.allow_trace") && req.method() == request::http_method::TRACE) {
+		output << req.raw_headers();
+		output << req.raw_body();
+		output << res.raw_headers();
+		output << res.raw_body();
+
+		return output.str();
+	}
+
 	unsigned int result_code = res.status_code();
+
 	view_function_t view = get_route(req.method(), req.path());
 	std::string response; // Site response.
 
@@ -174,17 +175,11 @@ std::string application::process(request & req, response & res) throw()
 	response += "\r\n";
 
 	// Construct a valid HTTP response.
-	std::stringstream output;
 	output << "HTTP/1.1 " << result_code << " " << response::status_codes[result_code] << "\r\n";
 
 	// Add all stored headers
-	for(auto & i : res.headers()) {
-		output << i.first << ": " << i.second << "\r\n";
-	}
-
-	// And custom "always" headers
-	output << "Date: " << rfc1123_datetime(std::time(NULL)) << "\r\n";
-	output << "Content-Length: " << response.length() << "\r\n";
+	output << res.raw_headers();
+	output << "Date: " << gud::util::rfc1123_datetime(std::time(NULL)) << "\r\n";
 
 	// Split to separate from body
 	output << "\r\n";

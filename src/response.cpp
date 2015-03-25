@@ -6,7 +6,8 @@ response::response()
 {
 	add_header("Content-Type", "text/html; charset=UTF-8");
     add_header("Server", gud::config::get("server.name"));
-    status_code_ = 200;
+    add_header("Date", gud::util::rfc1123_datetime(std::time(NULL)));
+    set_status_code(200);
 }
 
 response::~response()
@@ -80,4 +81,20 @@ void response::set_status_code(const unsigned int status)
 unsigned int response::status_code()
 {
     return status_code_;
+}
+
+std::string const response::raw_body() const
+{
+    return stream_.str();
+}
+
+std::string const response::raw_headers() const
+{
+    std::stringstream output;
+
+    for(auto & i : headers()) {
+        output << i.first << ": " << i.second << "\r\n";
+    }
+
+    return output.str();
 }
