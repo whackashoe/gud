@@ -153,14 +153,14 @@ std::string application::process(request & req, response & res) throw()
 		view(req, res);
 
 		// Generated response.
-		response = res.stream().str();
+		response = res.raw_body();
 	} catch (gud::http_error const & e) {
 		// Change HTTP result.
 		result_code = e.error_code();
 
 		// Generated response
 		// (before the exception was raised)
-		response = res.stream().str();
+		response = res.raw_body();
 	} catch (std::exception const & e) {
 		// We know what does this error (could) mean.
 		result_code = 500;
