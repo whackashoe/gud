@@ -179,7 +179,7 @@ std::string application::process(request & req, response & res) throw()
 
 	// Add all stored headers
 	output << res.raw_headers();
-	output << "Date: " << gud::util::rfc1123_datetime(std::time(NULL)) << "\r\n";
+	output << "Content-Length: " << response.length() << "\r\n";
 
 	// Split to separate from body
 	output << "\r\n";
