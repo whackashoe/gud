@@ -14,7 +14,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include <gud/aux/utils.hpp>
 #include <gud/request.hpp>
 #include <gud/response.hpp>
 #include <gud/exceptions.hpp>

@@ -17,9 +17,8 @@ BOOST_AUTO_TEST_CASE (test_throw_system_exception)
 		void operator()()
 		{
 			FILE * file = fopen("I_HOPE_THIS_FILE_DOES_NOT_EXISTS.txt", "r");
-			if (!file)
-			{
-				__throw_system_exception();
+			if (!file) {
+				throw std::runtime_error(std::strerror(errno));
 			}
 		}
 	} bad;

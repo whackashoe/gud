@@ -200,7 +200,7 @@ void application::listen(unsigned short const port, const char * address)
 {
 	server_socket_ = ::socket(AF_INET, SOCK_STREAM, 0);
 	if (server_socket_ < 0) {
-		__throw_system_exception();
+		throw std::runtime_error(std::strerror(errno));
 	}
 
 	struct sockaddr_in serv_addr = {0, 0, 0, 0};
@@ -211,13 +211,13 @@ void application::listen(unsigned short const port, const char * address)
 	int value = 1;
 
 	if (::setsockopt(server_socket_, SOL_SOCKET, SO_REUSEADDR, &value, sizeof(serv_addr)) < 0) {
-		__throw_system_exception();
+		throw std::runtime_error(std::strerror(errno));
 	}
 	if (::bind(server_socket_, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		__throw_system_exception();
+		throw std::runtime_error(std::strerror(errno));
 	}
 	if (::listen(server_socket_, 1) < 0) {
-		__throw_system_exception();
+		throw std::runtime_error(std::strerror(errno));
 	}
 
 	log::info("gud server listening on 127.0.0.1:{}", gud::config::get("server.port"));
@@ -228,7 +228,7 @@ void application::listen(unsigned short const port, const char * address)
 		const int client_socket = ::accept(server_socket_, (struct sockaddr *) &client_addr, &client_len);
 
 		if (client_socket < 0) {
-			__throw_system_exception();
+			throw std::runtime_error(std::strerror(errno));
 		}
 
 		// New client connected
