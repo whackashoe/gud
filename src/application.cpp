@@ -126,15 +126,15 @@ application::view_function_t application::get_route(request::http_method method,
 
 std::string application::process(request & req, response & res) throw()
 {
-	std::stringstream output;
+	std::string output;
 
 	if(config::get("server.allow_trace") && req.method() == request::http_method::TRACE) {
-		output << req.raw_headers();
-		output << req.raw_body();
-		output << res.raw_headers();
-		output << res.raw_body();
+		output += req.raw_headers()
+		       +  req.raw_body()
+		       +  res.raw_headers()
+		       +  res.raw_body();
 
-		return output.str();
+		return output;
 	}
 
 	unsigned int result_code = res.status_code();
@@ -175,21 +175,22 @@ std::string application::process(request & req, response & res) throw()
 	response += "\r\n";
 
 	// Construct a valid HTTP response.
-	output << "HTTP/1.1 " << result_code << " " << response::status_codes[result_code] << "\r\n";
+	output += "HTTP/1.1 " + std::to_string(result_code) + " " + response::status_codes[result_code] + "\r\n";
 
 	// Add all stored headers
-	output << res.raw_headers();
-	output << "Content-Length: " << response.length() << "\r\n";
+	output += res.raw_headers();
+	output += "Content-Length: " + std::to_string(response.length()) + "\r\n";
 
 	// Split to separate from body
-	output << "\r\n";
+	output += "\r\n";
 
 	// Head requires no body
-	if(req.method() != request::http_method::HEAD) {
-		output << response;
+	if(req.method() == request::http_method::HEAD) {
+		return output;
 	}
 
-	return output.str();
+	output += response;
+	return output;
 }
 
 std::vector<std::string> const & application::args() const

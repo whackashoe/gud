@@ -90,11 +90,11 @@ std::string const response::raw_body() const
 
 std::string const response::raw_headers() const
 {
-    std::stringstream output;
+    std::string output;
 
     for(auto & i : headers()) {
-        output << i.first << ": " << i.second << "\r\n";
+        output += i.first + ": " + i.second + "\r\n";
     }
 
-    return output.str();
+    return output;
 }

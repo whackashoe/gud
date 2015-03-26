@@ -7,8 +7,6 @@ request::request(std::string const & str_req)
 	std::stringstream ss(str_req);
 	std::string line;
 
-	std::stringstream raw_headers_ss;
-	std::stringstream raw_body_ss;
 
 	// Status Line
 	if(std::getline(ss, line)) {
@@ -23,8 +21,7 @@ request::request(std::string const & str_req)
 
 	// Parse Headers
 	while(std::getline(ss, line)) {
-		raw_headers_ss << line << "\n";
-		std::stringstream ls(line);
+		raw_headers_ += line + "\n";
 
 		// header lines
 		const std::string delimiter = ": ";
@@ -44,13 +41,11 @@ request::request(std::string const & str_req)
 			gud::log::trace("Request header missing delimiter");
 		}
 	}
-	raw_headers_ = raw_headers_ss.str();
 
 	// Parse Body
 	while(std::getline(ss, line)) {
-		raw_body_ss << line << "\n";
+		raw_body_ += line + "\n";
 	}
-	raw_body_ = raw_body_ss.str();
 
 	if (method_.empty()) {
 		gud::log::trace("Found no HTTP method in the request!");
