@@ -36,7 +36,7 @@ public:
 	/**
 	 * All the views should be of this type.
 	 */
-	typedef std::function<void(request &, response &)> view_function_t;
+	typedef std::function<std::string(request &, response &)> view_function_t;
 private:
 	std::vector<std::string> args_;
 

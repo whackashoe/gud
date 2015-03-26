@@ -130,9 +130,7 @@ std::string application::process(request & req, response & res) throw()
 
 	if(config::get("server.allow_trace") && req.method() == request::http_method::TRACE) {
 		output += req.raw_headers()
-		       +  req.raw_body()
-		       +  res.raw_headers()
-		       +  res.raw_body();
+		       +  req.raw_body();
 
 		return output;
 	}
@@ -149,18 +147,13 @@ std::string application::process(request & req, response & res) throw()
 			throw http_error(404);
 		}
 
-		// Run view.
-		view(req, res);
+		res.set_raw_body(view(req, res));
 
 		// Generated response.
 		response = res.raw_body();
 	} catch (gud::http_error const & e) {
 		// Change HTTP result.
 		result_code = e.error_code();
-
-		// Generated response
-		// (before the exception was raised)
-		response = res.raw_body();
 	} catch (std::exception const & e) {
 		// We know what does this error (could) mean.
 		result_code = 500;

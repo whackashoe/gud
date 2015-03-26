@@ -2,7 +2,7 @@
 
 struct ExampleController
 {
-	static void grab_data(gud::request & req, gud::response & res)
+	static std::string grab_data(gud::request & req, gud::response & res)
 	{
 		gud::json json = {
 			{ "pi", 3.141 },
@@ -19,7 +19,7 @@ struct ExampleController
 			}}
 		};
 
-		res.stream() << json;
+		return json;
 	}
 };
 
@@ -47,14 +47,13 @@ int main(int argc, char * argv[])
 	try {
 		// You can use lambda expressions
 		app.get("/", [](gud::request & req, gud::response & res) {
-			res.stream() << "Hello world!";
+			return "Hello world!";
 		});
 
 		// Get input data from post request and print it out
 		app.post("/post", [](gud::request & req, gud::response & res) {
-			res.stream()
-				<< "headers:\n\n" << req.raw_headers()
-				<< "body:\n\n"    << req.raw_body();
+			return "headers:\n\n" + req.raw_headers()
+				 + "body:\n\n"    + req.raw_body();
 		});
 
 		// Or simply reference a public static method in a controller
@@ -62,7 +61,7 @@ int main(int argc, char * argv[])
 
 		// Render a view easily
 		app.get("/view", [](gud::request & req, gud::response & res) {
-			res.stream() << gud::view::make("home.mustache", {
+			return gud::view::make("home.mustache", {
 				{ "name", "Gloop" },
 				{ "age",  std::to_string(4) }
 			});
@@ -71,7 +70,7 @@ int main(int argc, char * argv[])
 		// Straightforward logging
 		app.get("/log", [](gud::request & req, gud::response & res) {
 		    gud::log::info("welcome to gud");
-    		res.stream() << "logged";
+    		return "logged";
 		});
 
 		app.listen(gud::config::get("server.port"));

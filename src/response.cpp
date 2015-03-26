@@ -58,11 +58,6 @@ std::map<unsigned int, std::string> response::status_codes = {
     { 505, "HTTP Version Not Supported" }
 };
 
-std::stringstream & response::stream()
-{
-	return stream_;
-}
-
 void response::add_header(std::string const & field, std::string const & value)
 {
     headers_[field] = value;
@@ -71,21 +66,6 @@ void response::add_header(std::string const & field, std::string const & value)
 std::map<std::string, std::string> const & response::headers() const
 {
     return headers_;
-}
-
-void response::set_status_code(const unsigned int status)
-{
-    status_code_ = status;
-}
-
-unsigned int response::status_code()
-{
-    return status_code_;
-}
-
-std::string const response::raw_body() const
-{
-    return stream_.str();
 }
 
 std::string const response::raw_headers() const
@@ -97,4 +77,25 @@ std::string const response::raw_headers() const
     }
 
     return output;
+}
+
+unsigned int response::status_code()
+{
+    return status_code_;
+}
+
+void response::set_status_code(const unsigned int status)
+{
+    status_code_ = status;
+}
+
+
+std::string const response::raw_body() const
+{
+    return raw_body_;
+}
+
+void response::set_raw_body(std::string const & body)
+{
+    raw_body_ = body;
 }

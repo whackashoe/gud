@@ -18,11 +18,6 @@ public:
 	static std::map<unsigned int, std::string> status_codes;
 private:
 	/**
-	 * Buffered data written from view.
-	 */
-	std::stringstream stream_;
-
-	/**
 	 * All stored headers
 	 */
 	std::map<std::string, std::string> headers_;
@@ -31,6 +26,11 @@ private:
 	 * Raw text of headers
 	 */
 	std::string raw_headers_;
+
+	/**
+	 * Raw text of body
+	 */
+	std::string raw_body_;
 
 	/**
 	 * HTTP Status Code
@@ -46,11 +46,6 @@ public:
 	 * All buffered data is written to the client_socket_ descriptor.
 	 */
 	~response();
-
-	/**
-	 * A reference to view's stream.
-	 */
-	std::stringstream & stream();
 
 
 	/**
@@ -74,14 +69,19 @@ public:
 	std::string const raw_body() const;
 
 	/**
-	 * Set the status code for response
+	 * Set raw body as string
 	 */
-	void set_status_code(const unsigned int);
+	void set_raw_body(std::string const & body);
 
 	/**
 	 * Get the status code
 	 */
 	unsigned int status_code();
+
+	/**
+	 * Set the status code for response
+	 */
+	void set_status_code(const unsigned int);
 };
 
 } /* /namespace gud */
